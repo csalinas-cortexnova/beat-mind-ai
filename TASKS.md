@@ -8,52 +8,52 @@
 ## 1. Database Schema & Multi-Tenancy [`specs/database_spec.md`](specs/database_spec.md)
 
 ### Schema Definitions
-- [ ] Create Drizzle schema file for `gyms` table with `subscriptionStatusEnum`
-- [ ] Create Drizzle schema file for `users` table
-- [ ] Create Drizzle schema file for `gym_memberships` table with `gymMembershipRoleEnum` and unique constraint
-- [ ] Create Drizzle schema file for `athletes` table
-- [ ] Create Drizzle schema file for `athlete_bands` table with unique constraint on `gym_id` and `sensor_id`
-- [ ] Create Drizzle schema file for `sessions` table with `sessionStatusEnum`
-- [ ] Create Drizzle schema file for `hr_readings` table with BIGSERIAL primary key
-- [ ] Create Drizzle schema file for `session_athletes` table with unique constraint on `session_id` and `athlete_id`
-- [ ] Create Drizzle schema file for `ai_coaching_messages` table
-- [ ] Create Drizzle schema file for `agents` table with `agentStatusEnum`
-- [ ] Create Drizzle schema file for `hr_bands` table with `hrBandStatusEnum`
-- [ ] Create schema barrel export file (`lib/db/schema/index.ts`)
+- [x] Create Drizzle schema file for `gyms` table with `subscriptionStatusEnum`
+- [x] Create Drizzle schema file for `users` table
+- [x] Create Drizzle schema file for `gym_memberships` table with `gymMembershipRoleEnum` and unique constraint
+- [x] Create Drizzle schema file for `athletes` table
+- [x] Create Drizzle schema file for `athlete_bands` table with unique constraint on `gym_id` and `sensor_id`
+- [x] Create Drizzle schema file for `sessions` table with `sessionStatusEnum`
+- [x] Create Drizzle schema file for `hr_readings` table with BIGSERIAL primary key
+- [x] Create Drizzle schema file for `session_athletes` table with unique constraint on `session_id` and `athlete_id`
+- [x] Create Drizzle schema file for `ai_coaching_messages` table
+- [x] Create Drizzle schema file for `agents` table with `agentStatusEnum`
+- [x] Create Drizzle schema file for `hr_bands` table with `hrBandStatusEnum`
+- [x] Create schema barrel export file (`lib/db/schema/index.ts`)
 
 ### ORM & Configuration
-- [ ] Configure Drizzle ORM database client with node-postgres pool in `lib/db/index.ts`
-- [ ] Create `drizzle.config.ts` configuration file
-- [ ] Generate initial Drizzle migration from schema definitions
+- [x] Configure Drizzle ORM database client with node-postgres pool in `lib/db/index.ts`
+- [x] Create `drizzle.config.ts` configuration file
+- [x] Generate initial Drizzle migration from schema definitions
 
 ### Indexes & Constraints
-- [ ] Create index on `hr_readings (session_id, recorded_at DESC)`
-- [ ] Create index on `hr_readings (gym_id, recorded_at DESC)`
-- [ ] Create index on `hr_readings (athlete_id, recorded_at DESC)`
-- [ ] Create index on `sessions (gym_id, started_at DESC)`
-- [ ] Create partial index on `sessions (gym_id, status)` WHERE `status = 'active'`
-- [ ] Create partial index on `athletes (gym_id)` WHERE `is_active = true`
-- [ ] Create partial index on `athlete_bands (gym_id, sensor_id)` WHERE `is_active = true`
-- [ ] Create partial index on `gym_memberships (user_id)` WHERE `is_active = true`
-- [ ] Create index on `ai_coaching_messages (session_id, created_at DESC)`
-- [ ] Create index on `session_athletes (session_id)` and `(athlete_id)`
-- [ ] Create UNIQUE index on `users (clerk_user_id)` and `gyms (clerk_org_id)`
-- [ ] Add all foreign key constraints with correct ON DELETE behavior (CASCADE / SET NULL)
+- [x] Create index on `hr_readings (session_id, recorded_at DESC)`
+- [x] Create index on `hr_readings (gym_id, recorded_at DESC)`
+- [x] Create index on `hr_readings (athlete_id, recorded_at DESC)`
+- [x] Create index on `sessions (gym_id, started_at DESC)`
+- [x] Create partial index on `sessions (gym_id, status)` WHERE `status = 'active'`
+- [x] Create partial index on `athletes (gym_id)` WHERE `is_active = true`
+- [x] Create partial index on `athlete_bands (gym_id, sensor_id)` WHERE `is_active = true`
+- [x] Create partial index on `gym_memberships (user_id)` WHERE `is_active = true`
+- [x] Create index on `ai_coaching_messages (session_id, created_at DESC)`
+- [x] Create index on `session_athletes (session_id)` and `(athlete_id)`
+- [x] Create UNIQUE index on `users (clerk_user_id)` and `gyms (clerk_org_id)`
+- [x] Add all foreign key constraints with correct ON DELETE behavior (CASCADE / SET NULL)
 
 ### Multi-Tenancy & Utilities
-- [ ] Implement `withGymScope()` utility function in `lib/utils/gym-scope.ts`
-- [ ] Create `requireGymContext()` helper in `lib/auth/guards.ts`
-- [ ] Create database seed file (`lib/db/seed.ts`) with sample data for development
+- [x] Implement `withGymScope()` utility function in `lib/utils/gym-scope.ts`
+- [x] Create `requireGymContext()` helper in `lib/auth/guards.ts`
+- [x] Create database seed file (`lib/db/seed.ts`) with sample data for development
 
-### Partitioning & Maintenance
+### Partitioning & Maintenance (deferred to Phase 5)
 - [ ] Create migration for `hr_readings` table partitioning by month
 - [ ] Create automated partition management script (pg_cron or manual SQL)
 - [ ] Implement archival process for old `hr_readings` partitions
 
 ### Tests
-- [ ] Write tests for `withGymScope()` utility
-- [ ] Write tests for multi-tenant query isolation
-- [ ] Write integration tests for schema and migrations
+- [x] Write tests for `withGymScope()` utility
+- [x] Write tests for multi-tenant query isolation
+- [x] Write integration tests for schema and migrations
 
 ---
 

@@ -58,6 +58,14 @@ bun run test:watch    # Roda em modo watch
 bun run test:coverage # Roda com relatório de cobertura
 ```
 
+## Skill Creation for Agent Teams
+
+Before spawning agents in parallel for a complex task:
+1. Check if agents will need specialized knowledge not covered by existing skills
+2. If yes, create a new skill in `.claude/skills/<name>/SKILL.md`
+3. Update the Skills table in this CLAUDE.md file
+4. Agents can then invoke the skill via `/skill-name` to get domain-specific guidance
+
 ## Agent Spawning
 When asked to spawn, create, or start agents/teammates, ALWAYS use the Agent Teams system:
 1. `TeamCreate` to create the team  
@@ -77,6 +85,7 @@ NEVER use `Task` with `run_in_background: true` for spawning agents — that cre
 | AbacatePay | `/abacatepay` | Pagamentos PIX (Brasil) |
 | Cloudflare | `/cloudflare` | DNS, domínios, email routing, R2 storage |
 | Favicon | `/favicon` | Geração de favicons e app icons |
+| Drizzle | `/drizzle` | Schema patterns, migrations, multi-tenancy |
 
 ## Commands Disponíveis
 

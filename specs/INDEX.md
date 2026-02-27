@@ -4,7 +4,7 @@
 
 | # | Spec | Status | File | Description |
 |---|------|--------|------|-------------|
-| 01 | Database Schema & Multi-Tenancy | [ ] | [database_spec.md](database_spec.md) | Drizzle schema, indexes, multi-tenant utilities, partitioning |
+| 01 | Database Schema & Multi-Tenancy | [x] | [database_spec.md](database_spec.md) | Drizzle schema, indexes, multi-tenant utilities, partitioning |
 | 02 | Authentication & Authorization | [ ] | [auth_spec.md](auth_spec.md) | Clerk setup, middleware, auth guards, agent/TV auth, webhooks |
 | 03 | REST API | [ ] | [api_spec.md](api_spec.md) | All endpoints: agent, superadmin, gym, athlete, reports |
 | 04 | Security | [ ] | [security_spec.md](security_spec.md) | Credentials, tenant isolation, headers, CORS, DB roles, logging |

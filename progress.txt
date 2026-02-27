@@ -6,3 +6,11 @@ Categories: COMPLETED | GOTCHA | DECISION | BLOCKER | NOTE
 ---
 
 [2026-02-26] NOTE: Project tracking files created (specs/INDEX.md, progress.txt, CLAUDE.md updated)
+[2026-02-26] COMPLETED: Spec 01 — Database Schema & Multi-Tenancy (11 tables, 13 indexes, 17 FKs, 45 tests passing)
+[2026-02-26] DECISION: No pgEnum — using varchar + as const arrays for enum columns (simpler ALTER TABLE)
+[2026-02-26] DECISION: BIGSERIAL mode:'number' for hr_readings (safe up to 2^53, avoids BigInt)
+[2026-02-26] DECISION: Partitioning deferred to Phase 5 — Drizzle can't express PARTITION BY RANGE natively
+[2026-02-26] DECISION: Spec 12 columns (athletes.gender, session_athletes.{report_token, whatsapp_sent_at, whatsapp_status}) included in initial schema
+[2026-02-26] GOTCHA: drizzle.config.ts needs dotenv.config({ path: ".env.local" }) — drizzle-kit CLI doesn't auto-load .env.local like Next.js does
+[2026-02-26] GOTCHA: Drizzle v0.45 removed table._.name — use getTableName() from drizzle-orm instead
+[2026-02-26] NOTE: Drizzle skill created at .claude/skills/drizzle/SKILL.md for agent teams
