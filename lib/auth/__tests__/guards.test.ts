@@ -46,6 +46,7 @@ import {
   requireAthlete,
   requireSuperAdminApi,
   requireGymAccessApi,
+  requireGymOwnerApi,
   isAuthError,
 } from "../guards";
 
@@ -532,6 +533,112 @@ describe("requireGymAccessApi", () => {
         clerkUserId: "clerk_user_1",
         dbUserId: DB_USER_ID,
         email: "admin@test.com",
+        isSuperAdmin: false,
+      },
+      gymId: GYM_ID,
+      orgId: ORG_ID,
+      role: "owner",
+    });
+  });
+});
+
+describe("requireGymOwnerApi", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should return 401 error when no user", async () => {
+    mockAuth.mockResolvedValue({ userId: null });
+    const result = await requireGymOwnerApi();
+    expect(isAuthError(result)).toBe(true);
+    if (isAuthError(result)) {
+      expect(result.status).toBe(401);
+    }
+  });
+
+  it("should return 403 error when no orgId", async () => {
+    mockAuth.mockResolvedValue({ userId: "clerk_user_1", orgId: null, orgRole: null });
+    const result = await requireGymOwnerApi();
+    expect(isAuthError(result)).toBe(true);
+    if (isAuthError(result)) {
+      expect(result.status).toBe(403);
+    }
+  });
+
+  it("should return 403 when trainer role", async () => {
+    mockAuth.mockResolvedValue({
+      userId: "clerk_user_1",
+      orgId: ORG_ID,
+      orgRole: "org:trainer",
+    });
+    const result = await requireGymOwnerApi();
+    expect(isAuthError(result)).toBe(true);
+    if (isAuthError(result)) {
+      expect(result.status).toBe(403);
+    }
+  });
+
+  it("should return 403 when athlete role", async () => {
+    mockAuth.mockResolvedValue({
+      userId: "clerk_user_1",
+      orgId: ORG_ID,
+      orgRole: "org:athlete",
+    });
+    const result = await requireGymOwnerApi();
+    expect(isAuthError(result)).toBe(true);
+    if (isAuthError(result)) {
+      expect(result.status).toBe(403);
+    }
+  });
+
+  it("should return 403 when gym not found", async () => {
+    mockAuth.mockResolvedValue({
+      userId: "clerk_user_1",
+      orgId: ORG_ID,
+      orgRole: "org:admin",
+    });
+    setupDbResponses([]); // No gym
+    const result = await requireGymOwnerApi();
+    expect(isAuthError(result)).toBe(true);
+    if (isAuthError(result)) {
+      expect(result.status).toBe(403);
+    }
+  });
+
+  it("should return 403 when no DB user", async () => {
+    mockAuth.mockResolvedValue({
+      userId: "clerk_user_1",
+      orgId: ORG_ID,
+      orgRole: "org:admin",
+    });
+    setupDbResponses(
+      [{ id: GYM_ID }], // Gym found
+      [], // No DB user
+    );
+    const result = await requireGymOwnerApi();
+    expect(isAuthError(result)).toBe(true);
+    if (isAuthError(result)) {
+      expect(result.status).toBe(403);
+    }
+  });
+
+  it("should return GymContext for valid admin", async () => {
+    mockAuth.mockResolvedValue({
+      userId: "clerk_user_1",
+      orgId: ORG_ID,
+      orgRole: "org:admin",
+    });
+    setupDbResponses(
+      [{ id: GYM_ID }],
+      [{ id: DB_USER_ID, clerkUserId: "clerk_user_1", email: "owner@test.com", isSuperadmin: false }],
+    );
+    const result = await requireGymOwnerApi();
+    expect(isAuthError(result)).toBe(false);
+    expect(result).toEqual({
+      user: {
+        clerkUserId: "clerk_user_1",
+        dbUserId: DB_USER_ID,
+        email: "owner@test.com",
         isSuperAdmin: false,
       },
       gymId: GYM_ID,

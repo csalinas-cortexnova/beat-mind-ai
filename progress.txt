@@ -54,3 +54,14 @@ Categories: COMPLETED | GOTCHA | DECISION | BLOCKER | NOTE
 [2026-02-27] DECISION: DELETE bands is idempotent — returns 200 even if no active bands exist
 [2026-02-27] DECISION: ListAthletesQuerySchema extends PaginationSchema with search (name/email ilike) and active (boolean) filters
 [2026-02-27] DECISION: GET athletes includes band info (sensorId, label) via left join on athleteBands (active only)
+[2026-02-27] COMPLETED: Spec 03 Part F — Gym Profile, Trainers, Sessions Endpoints (7 endpoints: GET/PATCH profile, GET/POST trainers, GET sessions, GET sessions/active, POST sessions/[id]/end — 54 new tests, 550 total passing)
+[2026-02-27] DECISION: Added requireGymOwnerApi guard — mirrors requireGymAccessApi but restricts to org:admin role, returns 403 for trainers
+[2026-02-27] DECISION: GET profile nests logoUrl/primaryColor/secondaryColor into branding object; tvAccessToken only returned for owner role
+[2026-02-27] DECISION: PATCH profile flattens branding sub-fields before DB update — only updates provided sub-fields
+[2026-02-27] DECISION: POST trainers sends Clerk org invitation only — DB rows created by webhook handler (organizationMembership.created)
+[2026-02-27] DECISION: POST trainers checks existing membership by email join before sending invitation — returns ALREADY_MEMBER 409
+[2026-02-27] DECISION: GET sessions/active computes durationSeconds from startedAt, isActive flag uses 30s threshold from last HR reading
+[2026-02-27] DECISION: POST sessions/[id]/end body is optional — uses try/catch on request.text() + JSON.parse for optional classType
+[2026-02-27] DECISION: POST sessions/[id]/end upserts session_athletes with onConflictDoUpdate for per-athlete HR stats; zone times/calories set to 0/null (TODO Specs 10/12)
+[2026-02-27] DECISION: ListSessionsQuerySchema extends PaginationSchema with from/to (ISO datetime) and status (session status enum) filters
+[2026-02-27] GOTCHA: Adding sessionStatusEnum import to gym-queries.ts caused existing athlete test to break — need sessionStatusEnum in all test schema mocks that transitively import gym-queries

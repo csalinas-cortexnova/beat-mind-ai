@@ -147,18 +147,18 @@
 - [x] Implement `GET /api/v1/superadmin/agents` with pagination and status filtering
 
 ### Gym Endpoints
-- [ ] Implement `GET /api/v1/gym/profile` with branding and TV token
-- [ ] Implement `PATCH /api/v1/gym/profile` with branding, settings, and TV token regeneration
+- [x] Implement `GET /api/v1/gym/profile` with branding and TV token
+- [x] Implement `PATCH /api/v1/gym/profile` with branding, settings, and TV token regeneration
 - [x] Implement `GET /api/v1/gym/athletes` with pagination, search, active filter
 - [x] Implement `POST /api/v1/gym/athletes` with max limit enforcement and email uniqueness
 - [x] Implement `PATCH /api/v1/gym/athletes/[id]` with band deactivation on inactive
 - [x] Implement `POST /api/v1/gym/athletes/[id]/bands` with sensor assignment validation
 - [x] Implement `DELETE /api/v1/gym/athletes/[id]/bands`
-- [ ] Implement `GET /api/v1/gym/trainers` (owner-only)
-- [ ] Implement `POST /api/v1/gym/trainers` with Clerk invitation
-- [ ] Implement `GET /api/v1/gym/sessions` with date range and status filtering
-- [ ] Implement `GET /api/v1/gym/sessions/active` with real-time athlete data
-- [ ] Implement `POST /api/v1/gym/sessions/[id]/end` with stats calculation and async jobs
+- [x] Implement `GET /api/v1/gym/trainers` (owner-only)
+- [x] Implement `POST /api/v1/gym/trainers` with Clerk invitation
+- [x] Implement `GET /api/v1/gym/sessions` with date range and status filtering
+- [x] Implement `GET /api/v1/gym/sessions/active` with real-time athlete data
+- [x] Implement `POST /api/v1/gym/sessions/[id]/end` with stats calculation and async jobs
 
 ### Athlete Endpoints
 - [ ] Implement `GET /api/v1/athlete/profile` with gym info and weekly streak

@@ -208,3 +208,27 @@ export async function requireGymAccessApi(
     role: mapOrgRole(orgRole),
   };
 }
+
+/**
+ * API version of requireGymOwner.
+ * Returns AuthError instead of redirecting. Trainers get 403.
+ */
+export async function requireGymOwnerApi(): Promise<GymContext | AuthError> {
+  const { userId, orgId, orgRole } = await auth();
+  if (!userId) return { error: "Unauthorized", status: 401 };
+  if (!orgId || orgRole !== "org:admin")
+    return { error: "Forbidden", status: 403 };
+
+  const gym = await findGymByOrg(orgId);
+  if (!gym) return { error: "Forbidden", status: 403 };
+
+  const dbUser = await findDbUser(userId);
+  if (!dbUser) return { error: "Forbidden", status: 403 };
+
+  return {
+    user: toAuthUser(userId, dbUser),
+    gymId: gym.id,
+    orgId,
+    role: "owner",
+  };
+}

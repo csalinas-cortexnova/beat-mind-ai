@@ -65,6 +65,7 @@ vi.mock("@/lib/db/schema", () => ({
     id: "id", athleteId: "athlete_id", gymId: "gym_id", sensorId: "sensor_id",
     bandLabel: "band_label", isActive: "is_active", createdAt: "created_at",
   },
+  sessionStatusEnum: ["active", "completed", "cancelled"],
 }));
 
 vi.mock("drizzle-orm", () => ({
