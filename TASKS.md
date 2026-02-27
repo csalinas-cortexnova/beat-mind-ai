@@ -63,97 +63,97 @@
 - [ ] Configure Clerk organization model with roles (`org:admin`, `org:trainer`, `org:athlete`)
 - [ ] Define custom Clerk permissions (`org:gym:manage`, `org:trainers:manage`, etc.)
 - [ ] Create SuperAdmin flag in Clerk user `publicMetadata` (`is_superadmin`)
-- [ ] Set up `ClerkProvider` in `app/layout.tsx`
-- [ ] Create `/sign-in` and `/sign-up` pages with Clerk components
-- [ ] Create `/org-selection` page for users without active organization
+- [x] Set up `ClerkProvider` in `app/layout.tsx`
+- [x] Create `/sign-in` and `/sign-up` pages with Clerk components
+- [x] Create `/org-selection` page for users without active organization
 
 ### Middleware
-- [ ] Implement `middleware.ts` with Clerk integration for route protection
-- [ ] Create route matchers for public, superadmin, gym, and athlete routes
-- [ ] Configure middleware to skip `/tv/*` and `/api/agent/*` routes
+- [x] Implement `middleware.ts` with Clerk integration for route protection
+- [x] Create route matchers for public, superadmin, gym, and athlete routes
+- [x] Configure middleware to skip `/tv/*` and `/api/agent/*` routes
 
 ### Auth Guards
-- [ ] Create `lib/auth/types.ts` with AuthenticatedUser, GymContext, AthleteContext, AgentContext, TvContext interfaces
-- [ ] Create `requireSuperAdmin()` function in `lib/auth/guards.ts`
-- [ ] Create `requireGymAccess()` function with optional gymId parameter
-- [ ] Create `requireGymOwner()` function for owner-only operations
-- [ ] Create `requireTrainer()` function for trainer-specific operations
-- [ ] Create `requireAthlete()` function for athlete profile resolution
-- [ ] Create API variants: `requireSuperAdminApi()`, `requireGymAccessApi()` returning JSON errors
+- [x] Create `lib/auth/types.ts` with AuthenticatedUser, GymContext, AthleteContext, AgentContext, TvContext interfaces
+- [x] Create `requireSuperAdmin()` function in `lib/auth/guards.ts`
+- [x] Create `requireGymAccess()` function with optional gymId parameter
+- [x] Create `requireGymOwner()` function for owner-only operations
+- [x] Create `requireTrainer()` function for trainer-specific operations
+- [x] Create `requireAthlete()` function for athlete profile resolution
+- [x] Create API variants: `requireSuperAdminApi()`, `requireGymAccessApi()` returning JSON errors
 
 ### Agent Auth
-- [ ] Create `lib/auth/agent-auth.ts` with `verifyAgentAuth()` for HTTP header-based authentication
-- [ ] Create `verifyAgentWsAuth()` for WebSocket connection validation
-- [ ] Implement bcrypt secret comparison and UUID format validation
+- [x] Create `lib/auth/agent-auth.ts` with `verifyAgentAuth()` for HTTP header-based authentication
+- [x] Create `verifyAgentWsAuth()` for WebSocket connection validation
+- [x] Implement bcrypt secret comparison and UUID format validation
 
 ### TV Auth
-- [ ] Create `lib/auth/tv-auth.ts` with `verifyTvToken()` function
-- [ ] Create `regenerateTvToken()` function
+- [x] Create `lib/auth/tv-auth.ts` with `verifyTvToken()` function
+- [x] Create `regenerateTvToken()` function
 
 ### Webhooks
-- [ ] Set up Clerk webhook endpoint at `/api/webhooks/clerk` with svix verification
-- [ ] Implement handlers for `user.created`, `user.updated`, `user.deleted`
-- [ ] Implement handlers for `organization.created`
-- [ ] Implement handlers for `organizationMembership.created`, `.updated`, `.deleted`
+- [x] Set up Clerk webhook endpoint at `/api/webhooks/clerk` with svix verification
+- [x] Implement handlers for `user.created`, `user.updated`, `user.deleted`
+- [x] Implement handlers for `organization.created`
+- [x] Implement handlers for `organizationMembership.created`, `.updated`, `.deleted`
 
 ### Routing & Redirects
-- [ ] Create `lib/auth/redirect.ts` with `redirectByRole()` function
-- [ ] Create `/dashboard/page.tsx` with role-based redirect
-- [ ] Create `/unauthorized` error page
+- [x] Create `lib/auth/redirect.ts` with `redirectByRole()` function
+- [x] Create `/dashboard/page.tsx` with role-based redirect
+- [x] Create `/unauthorized` error page
 
 ### Rate Limiting
 - [ ] Create `lib/rate-limit.ts` with Upstash Redis rate limiter instances
 - [ ] Apply rate limits to all route groups (agent, superadmin, gym, athlete, webhooks)
 
 ### Security Headers
-- [ ] Implement security headers in `next.config.ts` (X-Frame-Options, CSP, HSTS, etc.)
+- [x] Implement security headers in `next.config.ts` (X-Frame-Options, CSP, HSTS, etc.)
 
 ### Tests
-- [ ] Create test suite for all auth guards
-- [ ] Create test suite for agent auth
-- [ ] Create test suite for TV token validation
-- [ ] Create test suite for middleware route protection
-- [ ] Create test suite for webhook handlers
+- [x] Create test suite for all auth guards
+- [x] Create test suite for agent auth
+- [x] Create test suite for TV token validation
+- [x] Create test suite for middleware route protection
+- [x] Create test suite for webhook handlers
 
 ---
 
 ## 3. REST API [`specs/api_spec.md`](specs/api_spec.md)
 
 ### Shared Utilities
-- [ ] Create `lib/api/response.ts` with `ok()` and `error()` helpers
-- [ ] Create `lib/api/validate.ts` with `validateBody()` and `validateQuery()` helpers
-- [ ] Create `lib/api/pagination.ts` with pagination utilities
+- [x] Create `lib/api/response.ts` with `ok()` and `error()` helpers
+- [x] Create `lib/api/validate.ts` with `validateBody()` and `validateQuery()` helpers
+- [x] Create `lib/api/pagination.ts` with pagination utilities
 - [ ] Create `lib/api/rate-limit.ts` with rate limiting configuration
-- [ ] Create comprehensive error code enumeration
+- [x] Create comprehensive error code enumeration
 
 ### Zod Validation Schemas
-- [ ] Create `lib/validations/common.ts` with UUID, email, phone, hexColor, timezone patterns
-- [ ] Create `lib/validations/agent.ts` (AgentHeartbeatSchema, AgentStatusSchema)
-- [ ] Create `lib/validations/gym.ts` (CreateGymSchema, UpdateGymSchema)
-- [ ] Create `lib/validations/athlete.ts` (CreateAthleteSchema, UpdateAthleteSchema)
-- [ ] Create `lib/validations/band.ts` (AssignBandSchema)
-- [ ] Create `lib/validations/trainer.ts` (InviteTrainerSchema)
-- [ ] Create `lib/validations/session.ts` (EndSessionSchema)
-- [ ] Create `lib/validations/report.ts` (SendWhatsAppSchema)
+- [x] Create `lib/validations/common.ts` with UUID, email, phone, hexColor, timezone patterns
+- [x] Create `lib/validations/agent.ts` (AgentHeartbeatSchema, AgentStatusSchema)
+- [x] Create `lib/validations/gym.ts` (CreateGymSchema, UpdateGymSchema, UpdateGymProfileSchema)
+- [x] Create `lib/validations/athlete.ts` (CreateAthleteSchema, UpdateAthleteSchema, UpdateAthleteProfileSchema)
+- [x] Create `lib/validations/band.ts` (AssignBandSchema)
+- [x] Create `lib/validations/trainer.ts` (InviteTrainerSchema)
+- [x] Create `lib/validations/session.ts` (EndSessionSchema)
+- [x] Create `lib/validations/report.ts` (SendWhatsAppSchema)
 
 ### Agent Endpoints
-- [ ] Implement `POST /api/agent/heartbeat` with auth, validation, HR zone computation, bulk insert
-- [ ] Implement `POST /api/agent/status` with auth and status tracking
+- [x] Implement `POST /api/agent/heartbeat` with auth, validation, HR zone computation, bulk insert
+- [x] Implement `POST /api/agent/status` with auth and status tracking
 
 ### SuperAdmin Endpoints
-- [ ] Implement `GET /api/v1/superadmin/gyms` with pagination, filtering, search, aggregated stats
-- [ ] Implement `POST /api/v1/superadmin/gyms` with Clerk Organization creation and invitation
-- [ ] Implement `PATCH /api/v1/superadmin/gyms/[id]` with partial updates and subscription transitions
-- [ ] Implement `GET /api/v1/superadmin/agents` with pagination and status filtering
+- [x] Implement `GET /api/v1/superadmin/gyms` with pagination, filtering, search, aggregated stats
+- [x] Implement `POST /api/v1/superadmin/gyms` with Clerk Organization creation and invitation
+- [x] Implement `PATCH /api/v1/superadmin/gyms/[id]` with partial updates and subscription transitions
+- [x] Implement `GET /api/v1/superadmin/agents` with pagination and status filtering
 
 ### Gym Endpoints
 - [ ] Implement `GET /api/v1/gym/profile` with branding and TV token
 - [ ] Implement `PATCH /api/v1/gym/profile` with branding, settings, and TV token regeneration
-- [ ] Implement `GET /api/v1/gym/athletes` with pagination, search, active filter
-- [ ] Implement `POST /api/v1/gym/athletes` with max limit enforcement and email uniqueness
-- [ ] Implement `PATCH /api/v1/gym/athletes/[id]` with band deactivation on inactive
-- [ ] Implement `POST /api/v1/gym/athletes/[id]/bands` with sensor assignment validation
-- [ ] Implement `DELETE /api/v1/gym/athletes/[id]/bands`
+- [x] Implement `GET /api/v1/gym/athletes` with pagination, search, active filter
+- [x] Implement `POST /api/v1/gym/athletes` with max limit enforcement and email uniqueness
+- [x] Implement `PATCH /api/v1/gym/athletes/[id]` with band deactivation on inactive
+- [x] Implement `POST /api/v1/gym/athletes/[id]/bands` with sensor assignment validation
+- [x] Implement `DELETE /api/v1/gym/athletes/[id]/bands`
 - [ ] Implement `GET /api/v1/gym/trainers` (owner-only)
 - [ ] Implement `POST /api/v1/gym/trainers` with Clerk invitation
 - [ ] Implement `GET /api/v1/gym/sessions` with date range and status filtering
@@ -172,8 +172,8 @@
 - [ ] Implement `POST /api/v1/reports/session/[id]/send-whatsapp` with retry logic
 
 ### Tests
-- [ ] Create integration tests for all agent endpoints
-- [ ] Create integration tests for all superadmin endpoints
+- [x] Create integration tests for all agent endpoints
+- [x] Create integration tests for all superadmin endpoints
 - [ ] Create integration tests for all gym endpoints
 - [ ] Create integration tests for all athlete endpoints
 - [ ] Create integration tests for all report endpoints
@@ -373,7 +373,7 @@
 - [ ] Implement `useGridLayout.ts` for dynamic column/row calculation (1-20 athletes)
 
 ### HR Zone Utilities
-- [ ] Create `lib/hr/zones.ts` with zone constants, colors, and localized names (es/pt)
+- [x] Create `lib/hr/zones.ts` with zone constants, colors, and localized names (es/pt)
 - [ ] Implement UUID validation utility
 
 ### Animations & Styling
@@ -548,8 +548,8 @@
 - [ ] Store summary in `sessions.ai_summary`
 
 ### HR Zone Utilities
-- [ ] Create `lib/hr/zones.ts` with zone constants, colors, localized names (es/pt)
-- [ ] Implement zone calculation function
+- [x] Create `lib/hr/zones.ts` with zone constants, colors, localized names (es/pt)
+- [x] Implement zone calculation function
 
 ### Integration
 - [ ] Wire coaching service to `ws-server.ts` for timer lifecycle management

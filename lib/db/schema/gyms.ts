@@ -10,6 +10,7 @@ import { sql } from "drizzle-orm";
 
 export const subscriptionStatusEnum = [
   "active",
+  "trial",
   "suspended",
   "cancelled",
 ] as const;

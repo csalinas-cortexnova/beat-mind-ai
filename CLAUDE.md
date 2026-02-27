@@ -12,12 +12,41 @@ Este arquivo fornece instruções ao Claude Code quando trabalhando neste reposi
 
 ## Project Tracking
 
-- **Before starting work**, consult `specs/INDEX.md` to understand project status and dependencies
-- **When starting a spec**, update its status to `[~]` in `specs/INDEX.md`
-- **When completing a spec**, update its status to `[x]` in `specs/INDEX.md`
-- **Mark tasks** in `TASKS.md` with `[~]` when starting, `[x]` when done
-- **Log gotchas, decisions, and blockers** in `progress.txt` using the format: `[YYYY-MM-DD] CATEGORY: description`
+> **CRITICAL**: Tracking updates are MANDATORY steps, not optional. Skipping them breaks coordination between agents and sessions. Treat them as part of the implementation — code without tracking updates is incomplete.
+
+### Mandatory Workflow (follow this order EVERY time)
+
+#### BEFORE writing any code:
+1. Read `specs/INDEX.md` to understand project status and dependencies
+2. Mark the spec as `[~]` in `specs/INDEX.md` (if not already)
+3. Mark the specific task(s) as `[~]` in `TASKS.md`
+4. Only THEN start writing tests/code
+
+#### DURING implementation:
+5. Log gotchas, decisions, and blockers in `progress.txt` as they happen (format: `[YYYY-MM-DD] CATEGORY: description`)
+6. If new tasks are discovered, add them to `TASKS.md` immediately
+
+#### AFTER implementation is complete (before moving on):
+7. Mark completed tasks as `[x]` in `TASKS.md`
+8. Update spec status in `specs/INDEX.md` (`[x]` if fully done, keep `[~]` if partially done)
+9. Log a COMPLETED entry in `progress.txt` summarizing what was done
+
+### Definition of Done
+
+A task is NOT done until ALL of these are true:
+- [ ] Tests pass (`bun run test`)
+- [ ] Lint passes (`bun run lint`)
+- [ ] Task marked `[x]` in `TASKS.md`
+- [ ] Spec status updated in `specs/INDEX.md`
+- [ ] `progress.txt` has COMPLETED entry + any decisions/gotchas logged
+
+### Task Selection and Scope Control
+
+- Select ONE task (or one cohesive batch) at a time
 - **Reference specs by number** (01-12) for consistency across agents and sessions
+- **Validate subtask volume**: If the number of subtasks is large, re-prioritize and execute in parts (phases or batches). Do not tackle everything at once.
+- **New tasks discovered during analysis**: Add them to `TASKS.md` and associate them with the relevant specs in `specs/`.
+- **Scope discipline**: Never do more than what is already specified unless strictly necessary (e.g., blockers, dependencies, or critical gaps).
 
 ## TDD (Test Driven Development)
 

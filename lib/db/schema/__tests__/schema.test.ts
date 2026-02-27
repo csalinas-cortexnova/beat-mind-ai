@@ -298,7 +298,7 @@ describe("Schema Definitions", () => {
 
 describe("Enum Values", () => {
   it("subscriptionStatusEnum should have correct values", () => {
-    expect(subscriptionStatusEnum).toEqual(["active", "suspended", "cancelled"]);
+    expect(subscriptionStatusEnum).toEqual(["active", "trial", "suspended", "cancelled"]);
   });
 
   it("gymMembershipRoleEnum should have correct values", () => {

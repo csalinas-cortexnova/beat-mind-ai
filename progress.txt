@@ -14,3 +14,43 @@ Categories: COMPLETED | GOTCHA | DECISION | BLOCKER | NOTE
 [2026-02-26] GOTCHA: drizzle.config.ts needs dotenv.config({ path: ".env.local" }) — drizzle-kit CLI doesn't auto-load .env.local like Next.js does
 [2026-02-26] GOTCHA: Drizzle v0.45 removed table._.name — use getTableName() from drizzle-orm instead
 [2026-02-26] NOTE: Drizzle skill created at .claude/skills/drizzle/SKILL.md for agent teams
+[2026-02-26] COMPLETED: Spec 02 Part A — Auth Foundation (types, agent-auth, tv-auth, guards, redirect, middleware, security headers — 90 new tests, 133 total passing)
+[2026-02-26] DECISION: Split Spec 02 into Part A (foundation) and Part B (integration: ClerkProvider, pages, webhooks)
+[2026-02-26] DECISION: Middleware uses testable getRouteDecision() pure function + clerkMiddleware wrapper (separation of concerns)
+[2026-02-26] DECISION: Auth guards split into page guards (redirect) and API guards (JSON errors) with shared isAuthError() type guard
+[2026-02-26] GOTCHA: vi.mock() hoisting — must use vi.hoisted() for mock variables referenced in vi.mock() factories
+[2026-02-26] GOTCHA: redirect() from next/navigation throws NEXT_REDIRECT error with digest property — tests extract URL from digest.split(";")[2]
+[2026-02-26] NOTE: Dependencies added: @clerk/nextjs, svix, bcryptjs, @types/bcryptjs
+[2026-02-26] COMPLETED: Spec 03 Part A — Shared API Utilities (response, validate, pagination, errors, common validations — 56 new tests, 189 total passing)
+[2026-02-26] DECISION: Zod v4.3.6 installed — using top-level z.email(), z.uuid() instead of z.string().email()/.uuid()
+[2026-02-26] GOTCHA: Zod v4 z.email() rejects whitespace-padded input — must pipe through z.string().transform(trim) before z.email()
+[2026-02-26] NOTE: Dependencies added: zod@4.3.6
+[2026-02-26] COMPLETED: Spec 03 Part B — Zod Validation Schemas (7 schema files + 7 test files, 133 new tests, 322 total passing)
+[2026-02-26] DECISION: subscriptionStatus includes "trial" per API spec (DB only has active/suspended/cancelled — may need migration)
+[2026-02-26] DECISION: Agent status enum ["online","degraded","error"] differs from DB ["online","offline","maintenance"] — intentionally different (self-reported vs stored)
+[2026-02-26] DECISION: language enum ["es","pt","en"] — DB default "pt-BR" uses different format, schema follows API spec
+[2026-02-26] NOTE: Zod v4 z.int() used for integer validation, z.iso.datetime() for ISO timestamps, z.union([z.ipv4(), z.ipv6()]) for IP addresses
+[2026-02-27] COMPLETED: Spec 03 Part C — Agent API Endpoints (heartbeat + status routes, HR zone utility — 46 new tests, 368 total passing)
+[2026-02-27] DECISION: lib/hr/zones.ts uses i18n names object {es, pt} per zone — getZone() defaults to Spanish, getZoneForLang() accepts lang param
+[2026-02-27] DECISION: Heartbeat auto-creates session (status='active', classType='general') when no active session exists for the gym
+[2026-02-27] DECISION: Unmapped sensors (no athlete_band) are silently skipped — returns ok with sessionId=null if zero mapped
+[2026-02-27] DECISION: hrMaxPercent stored as string in hr_readings (decimal column) — computed as Math.round(pct * 100)
+[2026-02-27] DECISION: Agent status endpoint stores self-reported status values (online/degraded/error) which differ from DB enum (online/offline/maintenance)
+[2026-02-27] COMPLETED: Spec 02 Part B — Clerk Integration (ClerkProvider, sign-in/sign-up/org-selection/unauthorized/dashboard pages, webhook endpoint with svix verification, 7 webhook handlers — 38 new tests, 406 total passing)
+[2026-02-27] DECISION: organization.created webhook is log-only — gyms are created via SuperAdmin API (Spec 03), not auto-created from Clerk webhooks
+[2026-02-27] DECISION: Unknown Clerk org roles default to "athlete" in membership webhook handler
+[2026-02-27] GOTCHA: Vitest 4 requires `class` (not arrow function) for vi.mock Webhook constructor — `Webhook: class MockWebhook { verify = mockVerify }`
+[2026-02-27] NOTE: Clerk Dashboard manual config still needed: roles (org:admin, org:trainer, org:athlete), permissions, superadmin publicMetadata flag — not code, documented only
+[2026-02-27] COMPLETED: Spec 03 Part D — SuperAdmin API Endpoints (4 endpoints: GET/POST gyms, PATCH gyms/[id], GET agents — 50 new tests, 456 total passing)
+[2026-02-27] DECISION: Added "trial" to subscriptionStatusEnum in DB schema (was missing, API spec requires it)
+[2026-02-27] DECISION: Auth error codes mapped correctly: 401→UNAUTHORIZED, 403→FORBIDDEN (agent routes only use UNAUTHORIZED)
+[2026-02-27] DECISION: Agent offline detection uses 90s threshold from lastHeartbeat — effectiveStatus field added to GET agents response
+[2026-02-27] DECISION: Clerk metadata sync on gym suspension: publicMetadata.suspended = true/false (non-blocking, failure logged but doesn't fail request)
+[2026-02-27] GOTCHA: Drizzle mock chain in tests needs all methods (from, where, orderBy, limit, offset, groupBy, leftJoin) — use queue-based thenable pattern for sequential mock results
+[2026-02-27] NOTE: clerkClient() in Clerk v6 is async — must `await clerkClient()` before calling methods
+[2026-02-27] COMPLETED: Spec 03 Part E — Gym Athlete & Band Endpoints (5 endpoints: GET/POST athletes, PATCH athletes/[id], POST/DELETE bands — 40 new tests, 496 total passing)
+[2026-02-27] DECISION: athlete_bands has non-partial unique on (gymId, sensorId) — POST bands must DELETE stale deactivated rows before INSERT to avoid constraint violation
+[2026-02-27] DECISION: PATCH athlete isActive=false triggers side-effect: deactivate all active bands for that athlete
+[2026-02-27] DECISION: DELETE bands is idempotent — returns 200 even if no active bands exist
+[2026-02-27] DECISION: ListAthletesQuerySchema extends PaginationSchema with search (name/email ilike) and active (boolean) filters
+[2026-02-27] DECISION: GET athletes includes band info (sensorId, label) via left join on athleteBands (active only)
