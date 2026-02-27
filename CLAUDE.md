@@ -5,8 +5,58 @@ Este arquivo fornece instruções ao Claude Code quando trabalhando neste reposi
 ## Instruções Gerais
 
 - Sempre use `bun` em vez de `npm`
+- Siga TDD: escreva testes primeiro, depois implemente
 - Execute testes antes de commit: `bun run test && bun run lint`
 - Prefira TypeScript sobre JavaScript
+- Quando precisar criar UI ou UX, use a skill `/frontend-design` para gerar interfaces de alta qualidade
+
+## Project Tracking
+
+- **Before starting work**, consult `specs/INDEX.md` to understand project status and dependencies
+- **When starting a spec**, update its status to `[~]` in `specs/INDEX.md`
+- **When completing a spec**, update its status to `[x]` in `specs/INDEX.md`
+- **Mark tasks** in `TASKS.md` with `[~]` when starting, `[x]` when done
+- **Log gotchas, decisions, and blockers** in `progress.txt` using the format: `[YYYY-MM-DD] CATEGORY: description`
+- **Reference specs by number** (01-12) for consistency across agents and sessions
+
+## TDD (Test Driven Development)
+
+Este projeto segue TDD rigoroso. **Nunca escreva código de feature sem um teste falhando primeiro.**
+
+### Ciclo Red-Green-Refactor
+1. **RED**: Escreva um teste que falha para o comportamento desejado
+2. **GREEN**: Escreva o código mínimo para o teste passar
+3. **REFACTOR**: Melhore o código mantendo os testes passando
+
+### Regras
+- Todo código de feature DEVE ter testes correspondentes
+- Testes devem ser escritos ANTES da implementação
+- **NÃO burle (mock) os testes para fazê-los passar** — testes devem validar comportamento real
+- **Implementações devem passar nos testes sem gambiarras** — se o teste falha, corrija a implementação, não o teste
+- Só use mocks para dependências externas (APIs, DB, serviços terceiros), nunca para a lógica sendo testada
+- Rode `bun run test` antes de qualquer commit
+- Rode `bun run test:watch` durante o desenvolvimento
+
+### Convenções de Testes
+- Arquivos de teste: `*.test.ts` / `*.test.tsx`
+- Localização: colocados junto ao código ou em `__tests__/`
+- Naming: `describe('ComponentName')` → `it('should do something')`
+- Use `@testing-library/react` para componentes
+- Use `@testing-library/user-event` para interações
+
+### Categorias de Testes
+| Tipo | Escopo | Ferramenta |
+|------|--------|------------|
+| Unit | Funções, hooks, utils | Vitest |
+| Integration | Componentes + estado | Vitest + Testing Library |
+| E2E | Fluxos completos | Playwright (futuro) |
+
+### Comandos
+```bash
+bun run test          # Roda todos os testes uma vez
+bun run test:watch    # Roda em modo watch
+bun run test:coverage # Roda com relatório de cobertura
+```
 
 ## Agent Spawning
 When asked to spawn, create, or start agents/teammates, ALWAYS use the Agent Teams system:

@@ -1,0 +1,8 @@
+# BeatMind AI - Progress & Gotchas
+
+Format: [YYYY-MM-DD] CATEGORY: description
+Categories: COMPLETED | GOTCHA | DECISION | BLOCKER | NOTE
+
+---
+
+[2026-02-26] NOTE: Project tracking files created (specs/INDEX.md, progress.txt, CLAUDE.md updated)
