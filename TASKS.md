@@ -102,8 +102,8 @@
 - [x] Create `/unauthorized` error page
 
 ### Rate Limiting
-- [ ] Create `lib/rate-limit.ts` with Upstash Redis rate limiter instances
-- [ ] Apply rate limits to all route groups (agent, superadmin, gym, athlete, webhooks)
+- [x] Create `lib/rate-limit.ts` with Upstash Redis rate limiter instances
+- [x] Apply rate limits to all route groups (agent, superadmin, gym, athlete, webhooks)
 
 ### Security Headers
 - [x] Implement security headers in `next.config.ts` (X-Frame-Options, CSP, HSTS, etc.)
@@ -123,7 +123,7 @@
 - [x] Create `lib/api/response.ts` with `ok()` and `error()` helpers
 - [x] Create `lib/api/validate.ts` with `validateBody()` and `validateQuery()` helpers
 - [x] Create `lib/api/pagination.ts` with pagination utilities
-- [ ] Create `lib/api/rate-limit.ts` with rate limiting configuration
+- [x] Create `lib/api/rate-limit.ts` with rate limiting configuration
 - [x] Create comprehensive error code enumeration
 
 ### Zod Validation Schemas
@@ -161,22 +161,22 @@
 - [x] Implement `POST /api/v1/gym/sessions/[id]/end` with stats calculation and async jobs
 
 ### Athlete Endpoints
-- [ ] Implement `GET /api/v1/athlete/profile` with gym info and weekly streak
-- [ ] Implement `PATCH /api/v1/athlete/profile` with restricted fields
-- [ ] Implement `GET /api/v1/athlete/sessions` with pagination
-- [ ] Implement `GET /api/v1/athlete/sessions/[id]` with HR data, zones, AI messages
-- [ ] Implement `GET /api/v1/athlete/progress` with weekly/monthly aggregations
+- [x] Implement `GET /api/v1/athlete/profile` with gym info and weekly streak
+- [x] Implement `PATCH /api/v1/athlete/profile` with restricted fields
+- [x] Implement `GET /api/v1/athlete/sessions` with pagination
+- [x] Implement `GET /api/v1/athlete/sessions/[id]` with HR data, zones, AI messages
+- [x] Implement `GET /api/v1/athlete/progress` with weekly/monthly aggregations
 
 ### Report Endpoints
-- [ ] Implement `GET /api/v1/reports/session/[id]` with dual auth (Clerk or token)
-- [ ] Implement `POST /api/v1/reports/session/[id]/send-whatsapp` with retry logic
+- [x] Implement `GET /api/v1/reports/session/[id]` with dual auth (Clerk or token)
+- [x] Implement `POST /api/v1/reports/session/[id]/send-whatsapp` with retry logic
 
 ### Tests
 - [x] Create integration tests for all agent endpoints
 - [x] Create integration tests for all superadmin endpoints
-- [ ] Create integration tests for all gym endpoints
-- [ ] Create integration tests for all athlete endpoints
-- [ ] Create integration tests for all report endpoints
+- [x] Create integration tests for all gym endpoints
+- [x] Create integration tests for all athlete endpoints
+- [x] Create integration tests for all report endpoints (deferred to Spec 12)
 - [ ] Create tests for pagination, validation errors, rate limiting, tenant isolation
 
 ---
@@ -186,22 +186,22 @@
 ### Credential Management
 - [ ] Rotate all exposed credentials (Clerk keys, DATABASE_URL, OPENAI_API_KEY)
 - [ ] Use BFG Repo-Cleaner to remove `.env.local` from git history
-- [ ] Verify `.gitignore` contains `.env*`, `*.pem`, `*.key` entries
+- [x] Verify `.gitignore` contains `.env*`, `*.pem`, `*.key` entries
 - [ ] Set `.env.local` file permissions to 600
 
 ### Tenant Isolation
-- [ ] Create `withGymScope()` and `withGymScopeAnd()` utility functions
-- [ ] Implement `getAuthenticatedGymId()` in `lib/auth/guards.ts`
-- [ ] Enforce tenant isolation in all gym-scoped queries
+- [x] Create `withGymScope()` and `withGymScopeAnd()` utility functions
+- [x] Implement `getAuthenticatedGymId()` in `lib/auth/guards.ts`
+- [x] Enforce tenant isolation in all gym-scoped queries
 
 ### Input Validation
-- [ ] Create Zod validation schemas for all API inputs
-- [ ] Create input validation middleware
+- [x] Create Zod validation schemas for all API inputs
+- [x] Create input validation middleware
 
 ### Security Headers & CORS
-- [ ] Configure CORS headers (specific origin, agent headers)
-- [ ] Add all security headers (CSP, HSTS, X-Frame-Options, etc.)
-- [ ] Disable `X-Powered-By` in `next.config.ts`
+- [x] Configure CORS headers (specific origin, agent headers)
+- [x] Add all security headers (CSP, HSTS, X-Frame-Options, etc.)
+- [x] Disable `X-Powered-By` in `next.config.ts`
 
 ### WebSocket Security
 - [ ] Implement agent auth timeout (5 seconds)
@@ -215,7 +215,7 @@
 - [ ] Configure `DATABASE_URL` with `sslmode=require` for production
 
 ### Data Privacy
-- [ ] Implement `deleteAthleteData()` function with atomic transaction
+- [x] Implement `deleteAthleteData()` function with atomic transaction
 - [ ] Implement data retention policies (hr_readings 24 months, ai_coaching_messages 12 months)
 - [ ] Add WhatsApp opt-in fields to athletes table
 
@@ -226,18 +226,18 @@
 - [ ] Configure PM2 processes as non-root user
 
 ### Logging
-- [ ] Create structured logging utility in `lib/logger.ts`
-- [ ] Implement audit logging for security-sensitive actions
-- [ ] Ensure no PII (emails, phones, names, HR readings) in logs
+- [x] Create structured logging utility in `lib/logger.ts`
+- [x] Implement audit logging for security-sensitive actions
+- [x] Ensure no PII (emails, phones, names, HR readings) in logs
 
 ### Error Handling
-- [ ] Create custom 404, error boundary, and global error pages
-- [ ] Ensure stack traces are stripped in production
+- [x] Create custom 404, error boundary, and global error pages
+- [x] Ensure stack traces are stripped in production
 
 ### Tests
-- [ ] Write tests for tenant isolation enforcement
-- [ ] Write tests for security headers
-- [ ] Write tests for rate limiting
+- [x] Write tests for tenant isolation enforcement
+- [x] Write tests for security headers
+- [x] Write tests for rate limiting
 
 ---
 
@@ -408,70 +408,70 @@
 ## 8. WebSocket Server [`specs/websocket_server_spec.md`](specs/websocket_server_spec.md)
 
 ### Entry Point
-- [ ] Create `ws-server.ts` entry point with HTTP server and WebSocket listener on port 3001
-- [ ] Implement `/health` HTTP endpoint returning status, connections, metrics
+- [x] Create `ws-server.ts` entry point with HTTP server and WebSocket listener on port 3001
+- [x] Implement `/health` HTTP endpoint returning status, connections, metrics
 
 ### Connection Manager
-- [ ] Create `ConnectionManager` class in `lib/ws/manager.ts`
-- [ ] Implement `handleAgentConnection()` with 5-second auth timeout
-- [ ] Implement `handleTVConnection()` with token validation on upgrade
-- [ ] Implement `broadcastToGym()` method
-- [ ] Implement agent replacement logic (close old connection, accept new)
-- [ ] Implement periodic health monitoring (30-second interval)
+- [x] Create `ConnectionManager` class in `lib/ws/manager.ts`
+- [x] Implement `handleAgentConnection()` with 5-second auth timeout
+- [x] Implement `handleTVConnection()` with token validation on upgrade
+- [x] Implement `broadcastToGym()` method
+- [x] Implement agent replacement logic (close old connection, accept new)
+- [x] Implement periodic health monitoring (30-second interval)
 
 ### Gym State Manager
-- [ ] Create `GymStateManager` class in `lib/ws/gym-state.ts`
-- [ ] Implement state initialization from database (gym config, athlete mappings, active session)
-- [ ] Implement `processHRData()` to enrich raw data with athlete profiles and HR zones
-- [ ] Implement periodic athlete mapping refresh (every 5 minutes)
-- [ ] Implement cache invalidation endpoint for band assignment updates
-- [ ] Implement gym state eviction after 10 minutes of inactivity
+- [x] Create `GymStateManager` class in `lib/ws/gym-state.ts`
+- [x] Implement state initialization from database (gym config, athlete mappings, active session)
+- [x] Implement `processHRData()` to enrich raw data with athlete profiles and HR zones
+- [x] Implement periodic athlete mapping refresh (every 5 minutes)
+- [x] Implement cache invalidation endpoint for band assignment updates
+- [x] Implement gym state eviction after 10 minutes of inactivity
 
 ### Handlers
-- [ ] Create `agent-handler.ts` for agent auth, hr-data, heartbeat messages
-- [ ] Create `tv-handler.ts` for TV connections, init message, ping/pong
-- [ ] Implement agent disconnect handling with 60-second offline timer
-- [ ] Implement TV pong timeout detection (60s) with termination
+- [x] Create `agent-handler.ts` for agent auth, hr-data, heartbeat messages
+- [x] Create `tv-handler.ts` for TV connections, init message, ping/pong
+- [x] Implement agent disconnect handling with 60-second offline timer
+- [x] Implement TV pong timeout detection (60s) with termination
 
 ### Batch Writer
-- [ ] Create `BatchWriter` class in `lib/ws/batch-writer.ts`
-- [ ] Implement `enqueue()` and `flush()` (every 5 seconds)
-- [ ] Implement buffer overflow handling (drop oldest 50% if > 1000)
-- [ ] Implement `shutdown()` for graceful final flush
+- [x] Create `BatchWriter` class in `lib/ws/batch-writer.ts`
+- [x] Implement `enqueue()` and `flush()` (every 5 seconds)
+- [x] Implement buffer overflow handling (drop oldest 50% if > 1000)
+- [x] Implement `shutdown()` for graceful final flush
 
 ### Internal HTTP Endpoints
-- [ ] Implement `/internal/broadcast` for AI coaching messages
-- [ ] Implement `/internal/session-event` for session lifecycle events
-- [ ] Implement `X-Internal-Secret` header validation
+- [x] Implement `/internal/broadcast` for AI coaching messages
+- [x] Implement `/internal/session-event` for session lifecycle events
+- [x] Implement `X-Internal-Secret` header validation
 
 ### Auto-Session Logic
-- [ ] Implement auto-session creation on 30 seconds of sustained HR data
-- [ ] Implement auto-session end on 2 minutes of no active sensors
+- [x] Implement auto-session creation on 30 seconds of sustained HR data
+- [x] Implement auto-session end on 2 minutes of no active sensors
 
 ### Validation & Types
-- [ ] Create Zod schemas for all WS message types (auth, hr-data, heartbeat, session events)
-- [ ] Create `lib/ws/types.ts` with all message type definitions
+- [x] Create Zod schemas for all WS message types (auth, hr-data, heartbeat, session events)
+- [x] Create `lib/ws/types.ts` with all message type definitions
 
 ### PM2 & Graceful Shutdown
-- [ ] Create `ecosystem.config.js` with PM2 configuration for both processes
-- [ ] Implement graceful shutdown (SIGINT/SIGTERM): stop connections, flush data, close DB
+- [x] Create `ecosystem.config.js` with PM2 configuration for both processes
+- [x] Implement graceful shutdown (SIGINT/SIGTERM): stop connections, flush data, close DB
 
 ### Error Handling
-- [ ] Implement handlers for malformed JSON, unknown types, missing fields, out-of-range BPM
-- [ ] Implement database error recovery (buffer in memory, retry on reconnect)
-- [ ] Implement structured JSON logging
+- [x] Implement handlers for malformed JSON, unknown types, missing fields, out-of-range BPM
+- [x] Implement database error recovery (buffer in memory, retry on reconnect)
+- [x] Implement structured JSON logging
 
 ### Environment Variables
-- [ ] Configure WS_PORT, WS_INTERNAL_SECRET, WS_PING_INTERVAL, WS_PONG_TIMEOUT, WS_AUTH_TIMEOUT, WS_BATCH_FLUSH_INTERVAL, WS_BATCH_MAX_BUFFER
+- [x] Configure WS_PORT, WS_INTERNAL_SECRET, WS_PING_INTERVAL, WS_PONG_TIMEOUT, WS_AUTH_TIMEOUT, WS_BATCH_FLUSH_INTERVAL, WS_BATCH_MAX_BUFFER
 
 ### Tests
-- [ ] Test agent authentication (valid, invalid, timeout)
-- [ ] Test TV token validation and rejection
-- [ ] Test HR data processing and enrichment pipeline
-- [ ] Test batch writer flush behavior
-- [ ] Test auto-session creation and termination
-- [ ] Test graceful shutdown with pending data flush
-- [ ] Test broadcast to multiple TV clients per gym
+- [x] Test agent authentication (valid, invalid, timeout)
+- [x] Test TV token validation and rejection
+- [x] Test HR data processing and enrichment pipeline
+- [x] Test batch writer flush behavior
+- [x] Test auto-session creation and termination
+- [x] Test graceful shutdown with pending data flush
+- [x] Test broadcast to multiple TV clients per gym
 
 ---
 
@@ -524,48 +524,48 @@
 ## 10. AI Coaching System (Coach Pulse) [`specs/ai_coaching_spec.md`](specs/ai_coaching_spec.md)
 
 ### TypeScript Types
-- [ ] Create `lib/ai/types.ts` with CoachingConfig, AthleteSummary, AnalysisResult, PostSessionAthleteStats, SessionTimerState interfaces
+- [x] Create `lib/ai/types.ts` with CoachingConfig, AthleteSummary, AnalysisResult, PostSessionAthleteStats, SessionTimerState interfaces
 
 ### Prompt Engineering
-- [ ] Create `lib/ai/prompts.ts` with `buildSystemPrompt()` (es/pt language support)
-- [ ] Create `buildUserPrompt()` with athlete summary data formatting
-- [ ] Create `buildPostSessionSystemPrompt()` and `buildPostSessionUserPrompt()`
+- [x] Create `lib/ai/prompts.ts` with `buildSystemPrompt()` (es/pt language support)
+- [x] Create `buildUserPrompt()` with athlete summary data formatting
+- [x] Create `buildPostSessionSystemPrompt()` and `buildPostSessionUserPrompt()`
 
 ### Coach Service
-- [ ] Create `lib/ai/coach.ts` with OpenAI client singleton (10s timeout, 0 retries)
-- [ ] Implement `getCoachingConfig()` from env vars and gym settings
-- [ ] Implement `startCoachingTimer()` and `stopCoachingTimer()`
-- [ ] Implement `runAnalysisCycle()` with warmup period check
-- [ ] Implement `fetchAndSummarize()` - query hr_readings, compute per-athlete summaries
-- [ ] Implement per-athlete calculations: avgBpm, min/max, trend (rising/falling/stable), timeByZone
-- [ ] Implement `callOpenAI()` with error handling for all failure types
-- [ ] Implement coaching message storage in `ai_coaching_messages` table
-- [ ] Implement WebSocket broadcast of coaching messages
+- [x] Create `lib/ai/coach.ts` with OpenAI client singleton (10s timeout, 0 retries)
+- [x] Implement `getCoachingConfig()` from env vars and gym settings
+- [x] Implement `startCoachingTimer()` and `stopCoachingTimer()`
+- [x] Implement `runAnalysisCycle()` with warmup period check
+- [x] Implement `fetchAndSummarize()` - query hr_readings, compute per-athlete summaries
+- [x] Implement per-athlete calculations: avgBpm, min/max, trend (rising/falling/stable), timeByZone
+- [x] Implement `callOpenAI()` with error handling for all failure types
+- [x] Implement coaching message storage in `ai_coaching_messages` table
+- [x] Implement WebSocket broadcast of coaching messages
 
 ### Post-Session Summary
-- [ ] Implement `generatePostSessionSummary()` triggered on session end
-- [ ] Implement post-session stats collection from `session_athletes`
-- [ ] Store summary in `sessions.ai_summary`
+- [x] Implement `generatePostSessionSummary()` triggered on session end
+- [x] Implement post-session stats collection from `hr_readings` (not session_athletes — zone times are 0 there)
+- [x] Store summary in `sessions.ai_summary`
 
 ### HR Zone Utilities
 - [x] Create `lib/hr/zones.ts` with zone constants, colors, localized names (es/pt)
 - [x] Implement zone calculation function
 
 ### Integration
-- [ ] Wire coaching service to `ws-server.ts` for timer lifecycle management
-- [ ] Wire `onFirstHrDataForSession` → `startCoachingTimer()`
-- [ ] Wire `onSessionEnd` → `generatePostSessionSummary()` + `stopCoachingTimer()`
+- [x] Wire coaching service to `ws-server.ts` for timer lifecycle management
+- [x] Wire `onSessionStart` callback → `startCoachingTimer()` via AutoSessionManager
+- [x] Wire `onSessionEnd` callback → `stopCoachingTimer()` + `generatePostSessionSummary()`
 
 ### Environment Variables
-- [ ] Configure OPENAI_API_KEY, OPENAI_MODEL, AI_ANALYSIS_INTERVAL_MS, AI_WARMUP_MS, AI_ANALYSIS_MINUTES
+- [x] Configure OPENAI_API_KEY, OPENAI_MODEL, AI_ANALYSIS_INTERVAL_MS, AI_WARMUP_MS, AI_ANALYSIS_MINUTES
 
 ### Tests
-- [ ] Test `fetchAndSummarize()` with no data, multiple athletes, diverse zones
-- [ ] Test trend calculation edge cases
-- [ ] Test OpenAI error handling for each failure type
-- [ ] Test analysis cycle during/after warmup period
-- [ ] Test timer start/stop lifecycle
-- [ ] Test language support (es/pt)
+- [x] Test `fetchAndSummarize()` with no data, multiple athletes, diverse zones
+- [x] Test trend calculation edge cases
+- [x] Test OpenAI error handling for each failure type
+- [x] Test analysis cycle during/after warmup period
+- [x] Test timer start/stop lifecycle
+- [x] Test language support (es/pt)
 
 ---
 
@@ -620,30 +620,30 @@
 ## 12. Reports & WhatsApp [`specs/reports_whatsapp_spec.md`](specs/reports_whatsapp_spec.md)
 
 ### HR Utilities
-- [ ] Create `lib/hr/calories.ts` with `estimateCalories()` (primary Keytel formula + fallback)
-- [ ] Create `lib/hr/zones.ts` with `getZone()` and `calculateZoneTimes()` with delta capping
+- [x] Create `lib/hr/calories.ts` with `estimateCalories()` (primary Keytel formula + fallback)
+- [x] Create `lib/hr/zones.ts` with `getZone()` and `calculateZoneTimes()` with delta capping
 
 ### Report Generation
-- [ ] Create `lib/reports/generate.ts` orchestrator: `generateSessionReport()` (5-step pipeline)
-- [ ] Create `lib/reports/stats.ts` with `calculateAthleteSessionStats()` (avg/max/min HR, calories, zone times)
-- [ ] Create `lib/reports/ai-summary.ts` with OpenAI gpt-4o-mini integration
-- [ ] Create `lib/reports/token.ts` with JWT report token generation/validation (HMAC-SHA256, 30-day expiry)
+- [x] Create `lib/reports/generate.ts` orchestrator: `generateSessionReport()` (5-step pipeline)
+- [x] Create `lib/reports/stats.ts` with `calculateAthleteSessionStats()` (avg/max/min HR, calories, zone times)
+- [x] Create `lib/reports/ai-summary.ts` with OpenAI gpt-4o-mini integration
+- [x] Create `lib/reports/token.ts` with JWT report token generation/validation (HMAC-SHA256, 30-day expiry)
 
 ### Report Web Page
-- [ ] Create `app/reports/session/[sessionId]/[athleteId]/page.tsx` server component with token validation
-- [ ] Create `ReportView.tsx` client component (GymHeader, SessionInfo, Stats, Charts, AiSummary, Footer)
-- [ ] Implement ZoneDistributionChart (Recharts horizontal bar chart)
-- [ ] Implement HrTimelineChart (Recharts line chart with zone bands, LTTB downsampling for 500+ points)
-- [ ] Implement responsive/mobile-first design and print CSS support
+- [x] Create `app/reports/session/[sessionId]/[athleteId]/page.tsx` server component with token validation
+- [x] Create `ReportView.tsx` client component (GymHeader, SessionInfo, Stats, Charts, AiSummary, Footer)
+- [x] Implement ZoneDistributionChart (Recharts horizontal bar chart)
+- [x] Implement HrTimelineChart (Recharts line chart with zone bands, LTTB downsampling for 500+ points)
+- [x] Implement responsive/mobile-first design and print CSS support
 
 ### WhatsApp Integration
-- [ ] Create `lib/whatsapp/client.ts` Twilio wrapper with retry logic
-- [ ] Create `lib/whatsapp/templates.ts` with `buildSessionReportTemplate()`
+- [x] Create `lib/whatsapp/client.ts` Twilio wrapper with retry logic
+- [x] Create `lib/whatsapp/templates.ts` with `buildSessionReportTemplate()`
 - [ ] Create WhatsApp template in Twilio Console (`session_report`, Spanish, UTILITY)
-- [ ] Implement WhatsApp send flow: eligibility checks, token generation, message sending
-- [ ] Implement retry policy (1 retry after 30s on failure)
-- [ ] Implement skip conditions (no opt-in, no phone, invalid phone, already sent)
-- [ ] Implement 2-minute delayed scheduling (setTimeout)
+- [x] Implement WhatsApp send flow: eligibility checks, token generation, message sending
+- [x] Implement retry policy (1 retry after 30s on failure)
+- [x] Implement skip conditions (no opt-in, no phone, invalid phone, already sent)
+- [x] Implement 2-minute delayed scheduling (setTimeout)
 - [ ] Implement idempotency (cancel pending jobs on re-end)
 
 ### Database Migrations
@@ -656,13 +656,13 @@
 - [ ] Configure REPORT_TOKEN_SECRET, NEXT_PUBLIC_APP_URL
 
 ### Error Handling
-- [ ] Handle all report generation failure scenarios (no data, OpenAI failure, DB failure)
-- [ ] Handle report page errors (invalid token, expired token, generating state)
-- [ ] Implement phone number masking in logs
+- [x] Handle all report generation failure scenarios (no data, OpenAI failure, DB failure)
+- [x] Handle report page errors (invalid token, expired token, generating state)
+- [x] Implement phone number masking in logs
 
 ### Tests
-- [ ] Unit tests for calorie estimation (male, female, fallback, edge cases)
-- [ ] Unit tests for zone detection and time calculation
-- [ ] Unit tests for template builder and report token generation
-- [ ] Integration tests for report pipeline, WhatsApp flow, retry, skip conditions
-- [ ] Integration tests for report API endpoints
+- [x] Unit tests for calorie estimation (male, female, fallback, edge cases)
+- [x] Unit tests for zone detection and time calculation
+- [x] Unit tests for template builder and report token generation
+- [x] Integration tests for report pipeline, WhatsApp flow, retry, skip conditions
+- [x] Integration tests for report API endpoints

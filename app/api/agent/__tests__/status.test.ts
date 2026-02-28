@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { _resetStore } from "@/lib/api/rate-limit";
 
 // --- Mocks ---
 
@@ -68,6 +69,7 @@ function validBody(overrides = {}) {
 describe("POST /api/agent/status", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    _resetStore();
   });
 
   // --- Auth ---
@@ -186,5 +188,47 @@ describe("POST /api/agent/status", () => {
     });
     const res = await POST(req);
     expect(res.status).toBe(422);
+  });
+
+  // --- Rate limiting ---
+  describe("rate limiting", () => {
+    it("should allow 2 requests per minute", async () => {
+      mockVerifyAgentAuth.mockResolvedValue({ agentId: AGENT_ID, gymId: GYM_ID });
+
+      const res1 = await POST(createRequest(validBody()));
+      expect(res1.status).toBe(200);
+
+      const res2 = await POST(createRequest(validBody()));
+      expect(res2.status).toBe(200);
+    });
+
+    it("should return 429 on 3rd request within 1 minute", async () => {
+      mockVerifyAgentAuth.mockResolvedValue({ agentId: AGENT_ID, gymId: GYM_ID });
+
+      await POST(createRequest(validBody()));
+      await POST(createRequest(validBody()));
+      const res3 = await POST(createRequest(validBody()));
+
+      expect(res3.status).toBe(429);
+      expect(res3.headers.get("Retry-After")).toBeTruthy();
+      const data = await res3.json();
+      expect(data.code).toBe("RATE_LIMITED");
+    });
+
+    it("should rate limit per agent independently", async () => {
+      const AGENT_2 = "660e8400-e29b-41d4-a716-446655440002";
+
+      // Agent 1: exhaust limit
+      mockVerifyAgentAuth.mockResolvedValue({ agentId: AGENT_ID, gymId: GYM_ID });
+      await POST(createRequest(validBody()));
+      await POST(createRequest(validBody()));
+      const res3 = await POST(createRequest(validBody()));
+      expect(res3.status).toBe(429);
+
+      // Agent 2: fresh limit
+      mockVerifyAgentAuth.mockResolvedValue({ agentId: AGENT_2, gymId: GYM_ID });
+      const res = await POST(createRequest(validBody({ agentId: AGENT_2 })));
+      expect(res.status).toBe(200);
+    });
   });
 });

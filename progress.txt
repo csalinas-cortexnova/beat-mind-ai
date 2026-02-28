@@ -65,3 +65,103 @@ Categories: COMPLETED | GOTCHA | DECISION | BLOCKER | NOTE
 [2026-02-27] DECISION: POST sessions/[id]/end upserts session_athletes with onConflictDoUpdate for per-athlete HR stats; zone times/calories set to 0/null (TODO Specs 10/12)
 [2026-02-27] DECISION: ListSessionsQuerySchema extends PaginationSchema with from/to (ISO datetime) and status (session status enum) filters
 [2026-02-27] GOTCHA: Adding sessionStatusEnum import to gym-queries.ts caused existing athlete test to break — need sessionStatusEnum in all test schema mocks that transitively import gym-queries
+[2026-02-27] GOTCHA: Workflow violation — did not mark TASKS.md tasks as [~] before coding, and logged decisions/gotchas in batch at the end instead of during implementation. Must follow CLAUDE.md mandatory workflow order strictly.
+[2026-02-27] COMPLETED: Spec 03 Part G — Athlete API Endpoints (5 endpoints: GET/PATCH profile, GET sessions, GET sessions/[id], GET progress — 48 new tests, 605 total passing)
+[2026-02-27] DECISION: Added requireAthleteApi() guard — mirrors requireAthlete() page guard but returns JSON errors (401/403) instead of redirecting
+[2026-02-27] DECISION: Added AthleteProgressQuerySchema with period enum (weekly/monthly, default weekly)
+[2026-02-27] DECISION: Created 3 pure utility functions: calculateWeeklyStreak (consecutive weeks from sorted dates), downsampleHrData (10-second bucket averaging), calculateTrend (linear regression slope → improving/stable/declining)
+[2026-02-27] DECISION: GET athlete/profile uses multi-join (athletes + athleteBands + gyms + sessionAthletes + sessions) with groupBy for aggregated stats (totalSessions, lastSessionAt) + separate query for weekly streak
+[2026-02-27] DECISION: GET athlete/sessions shapes flat zone columns (timeZone1S-5S) into nested hrZones object to match API spec
+[2026-02-27] DECISION: GET athlete/sessions/[id] uses params: Promise<{id}> pattern (Next.js 16 async params), downsamples HR readings to 720 points max
+[2026-02-27] DECISION: GET athlete/progress uses SQL date_trunc('week'|'month') for period aggregation, computes trend from session count series
+[2026-02-27] COMPLETED: Priority Queue system added to specs/INDEX.md — 11 priorities ordered by dependency graph, Spec 05 is Priority 1
+[2026-02-27] DECISION: Spec 03 marked [x] — all non-report endpoints done (605 tests). Report endpoints deferred to Spec 12 (needs calorie calc, AI summary, Twilio)
+[2026-02-27] DECISION: Created specs/plans/ directory for per-spec execution plans — each plan splits spec into autocontained parts for focused sessions
+[2026-02-27] COMPLETED: Spec 05 plan created (specs/plans/spec-05-superadmin-dashboard.md) — 5 parts: A=Foundation, B=Overview, C=GymList, D=GymCRUD, E=Agents. Parallelization: A→{B,C,E}→D
+[2026-02-27] NOTE: Starting Spec 04 — Security (Code-Level) — 4 parts: A=Core Utilities, B=CORS+Errors, C=Rate Limit App, D=Athlete Deletion
+[2026-02-27] DECISION: Rate limiter uses in-memory Map, not Upstash Redis — no external dependency, simpler for v1
+[2026-02-27] DECISION: Rate limiter is functional API (not class) — matches codebase style (withGymScope, ok, error are all functions)
+[2026-02-27] DECISION: Logger is console.log(JSON.stringify(...)) — no external deps, PM2 captures stdout/stderr
+[2026-02-27] DECISION: V1 API rate limiting centralized in middleware.ts (not per-route) — avoids modifying 15+ route files
+[2026-02-27] DECISION: Agent rate limiting in route handlers (unique configs + custom auth, not Clerk)
+[2026-02-27] DECISION: Athlete deletion skips JSONB anonymization for v1 — AI coaching messages contain zone/BPM summaries (not PII)
+[2026-02-27] DECISION: Audit logging via structured logger (no audit_log table yet)
+[2026-02-27] DECISION: global-error.tsx uses inline styles (renders outside root layout which loads CSS)
+[2026-02-27] DECISION: CORS Allow-Origin uses NEXT_PUBLIC_APP_URL env var with localhost:3000 fallback
+[2026-02-27] GOTCHA: @testing-library/react auto-cleanup not working in jsdom environment — need explicit afterEach(cleanup) in component test files
+[2026-02-27] GOTCHA: setInterval started at module load time (rate-limit cleanup) uses real timers — vi.useFakeTimers() can't intercept it, so exported _runCleanup() for test assertions
+[2026-02-27] GOTCHA: __tests__/ dir at root can't use require("../lib/...") for node environment — must use static imports with vitest path aliases
+[2026-02-27] COMPLETED: Spec 04 — Security (Code-Level) — 4 parts, 55 new tests (660 total passing), 0 lint errors. Files created: lib/api/rate-limit.ts, lib/logger.ts, lib/data/athlete-deletion.ts, app/not-found.tsx, app/error.tsx, app/global-error.tsx + 6 test files. Files modified: next.config.ts (CORS), middleware.ts (rate limits), agent heartbeat/status routes (rate limits), .gitignore (*.key, *.cert).
+[2026-02-27] NOTE: Starting Spec 08 — WebSocket Server — 5 parts: A=Foundation, B=BatchWriter, C=GymState, D=ConnectionManager+Handlers, E=EntryPoint
+[2026-02-27] DECISION: Spec 08 WS server uses `ws` lib (v8.19.0) as standalone process (ws-server.ts) since Next.js doesn't support persistent WS connections
+[2026-02-27] GOTCHA: Zod v4 z.uuid() validates version/variant bits — test UUIDs must be properly formatted (use 550e8400-e29b-41d4-a716-446655440000 pattern, not 11111111-...)
+[2026-02-27] DECISION: WS auth wrapper (lib/ws/auth.ts) is thin layer over existing verifyAgentWsAuth/verifyTvToken — adds timeout (4002), close codes (4001), and subscription status check for TV
+[2026-02-27] DECISION: WS BPM range 0-250 (not 30-250 like REST) — BPM=0 means sensor connected but no reading
+[2026-02-27] DECISION: authenticateTv() adds subscription check (active/trial only) that verifyTvToken() doesn't have
+[2026-02-27] NOTE: Starting Spec 08 Part C — GymStateManager class (gym-state.ts + tests)
+[2026-02-27] DECISION: GymStateManager uses call-counter pattern for mocking 3 sequential DB queries (gym config, bands+join, sessions) — each db.select() call returns different mock chain shape
+[2026-02-27] DECISION: Language normalization in GymStateManager: "pt-BR" → "pt", "es-AR" → "es", anything else → "es" (default) — because getZoneForLang checks `lang === "pt"` literally
+[2026-02-27] DECISION: processHRData only creates HRReadingInsert when ALL 3 conditions met: mapped athlete + bpm > 0 + active session exists
+[2026-02-27] DECISION: Absent device detection uses 5s threshold from deviceLastSeen — adds enriched entry with bpm=0, deviceActive=false for stale sensors
+[2026-02-27] COMPLETED: Spec 08 Part C — GymStateManager class (23 new tests, 743 total passing, 0 lint errors). Files: lib/ws/gym-state.ts + lib/ws/__tests__/gym-state.test.ts
+[2026-02-27] DECISION: AutoSessionManager auto-start threshold is 30 consecutive HR ticks with any bpm > 0. Reset to 0 when all bpm=0. Session classType="auto" for auto-started.
+[2026-02-27] DECISION: AutoSessionManager auto-end checks every 10s. Ends when lastActiveTime > 120s. Calculates durationSeconds from startedAt.
+[2026-02-27] DECISION: Agent handler rate limiting: inline 2 msg/s per agent with sliding window. Not using shared rate-limit module (returns NextResponse).
+[2026-02-27] DECISION: ConnectionManager URL routing: /ws/agent → agent auth, /ws/tv/{gymId}?token=TOKEN → TV auth, other → close 4000.
+[2026-02-27] DECISION: Agent replacement: one agent per gym. Old connection closed with 4003 (REPLACED) before new one registered.
+[2026-02-27] GOTCHA: vi.runAllTimersAsync() causes infinite loop with setInterval — use advanceTimersByTimeAsync in 10s steps instead for auto-session end tests
+[2026-02-27] COMPLETED: Spec 08 Part D — ConnectionManager + Handlers + AutoSession (33 new tests, 776 total passing). Files: lib/ws/manager.ts, lib/ws/agent-handler.ts, lib/ws/tv-handler.ts, lib/ws/auto-session.ts + 4 test files
+[2026-02-27] DECISION: HTTP handler extracted to lib/ws/http-handler.ts — testable without entry point, inline createHttpHandler() factory
+[2026-02-27] DECISION: ws-server.ts wires all modules: BatchWriter → GymStateManager → AutoSessionManager → ConnectionManager → http.createServer + WSS
+[2026-02-27] DECISION: Graceful shutdown order: stop HTTP → flush BatchWriter → close WS connections → stop GymState timers → stop AutoSession timers
+[2026-02-27] DECISION: PM2 config: beatmind-next (512M, port 3000) + beatmind-ws (256M, port 3001, kill_timeout 5s)
+[2026-02-27] COMPLETED: Spec 08 Part E — Entry Point + HTTP + PM2 + Shutdown (14 new tests, 790 total passing, 0 lint errors). Files: ws-server.ts, ecosystem.config.js, lib/ws/http-handler.ts + 2 test files. Modified: package.json (ws:dev script)
+[2026-02-27] COMPLETED: Spec 08 — WebSocket Server — ALL 5 PARTS DONE. 130 new tests (790 total), 0 lint errors. 12 new files + 1 modified: lib/ws/{types,schemas,config,auth,batch-writer,gym-state,manager,agent-handler,tv-handler,auto-session,http-handler}.ts + ws-server.ts + ecosystem.config.js. Spec moved to specs/done/
+[2026-02-27] NOTE: Validated plans for Spec 04 (COMPLETED, 24/24 files verified) and Spec 05 (PENDING, 36/36 tasks mapped). Fixed INDEX.md Spec 04 status [~]→[x], moved security_spec.md to specs/done/, added Context section to Spec 05 plan, corrected superadmin.ts from "create" to "modify" in plan.
+[2026-02-27] NOTE: Starting Spec 10 — AI Coaching (Coach Pulse) — 3 parts: A=Types+Prompts, B=CoachService, C=PostSession+Integration
+[2026-02-27] DECISION: Using existing TvCoachMessage type (type: "coach-message") instead of spec's "ai-coaching" — TV Dashboard already handles this type
+[2026-02-27] DECISION: Skip customCoachPrompt for v1 — column doesn't exist in gyms table, marked P2
+[2026-02-27] DECISION: Language normalization in coach config: gym.language "pt-BR" → "pt", default "es" — matches getZoneForLang() pattern
+[2026-02-27] DECISION: Post-session summary queries hr_readings directly (NOT session_athletes) — zone times are 0 in session_athletes (TODO for Spec 12)
+[2026-02-27] DECISION: AutoSessionManager callbacks are optional (SessionLifecycleCallbacks interface) — backward compatible, existing tests unaffected
+[2026-02-27] DECISION: onSessionStart callback is fire-and-forget (non-blocking via .catch), onSessionEnd is awaited (summary before state clear)
+[2026-02-27] DECISION: stopAllTimers() added to ws-server.ts shutdown sequence BEFORE batchWriter flush — prevents new AI calls during shutdown
+[2026-02-27] DECISION: OpenAI SDK v6 singleton with 10s timeout, 0 retries — matches spec. All failures return null (no throws)
+[2026-02-27] GOTCHA: vi.clearAllMocks() doesn't reset mockReturnValue — must explicitly set up mock chains for each test that depends on specific return values
+[2026-02-27] COMPLETED: Spec 10 — AI Coaching (Coach Pulse) — 3 parts (A=Types+Prompts, B=CoachService, C=PostSession+Integration), 44 new tests (834 total passing), 0 lint errors. Files created: lib/ai/types.ts, lib/ai/prompts.ts, lib/ai/coach.ts + 3 test files. Files modified: lib/ws/auto-session.ts (lifecycle callbacks), ws-server.ts (coaching wiring + shutdown). Dependency added: openai@6.25.0
+[2026-02-27] NOTE: Starting Spec 12 — Reports & WhatsApp — 4 parts: A=Foundation, B=WhatsApp+Pipeline, C=Report Web Page, D=API Routes (03H)
+[2026-02-27] DECISION: Spec 12 plan created (specs/plans/spec-12-reports-whatsapp.md) — Part A sequential (prereqs), then Parts B/C/D parallel. ~54 tests estimated.
+[2026-02-27] DECISION: Skip lib/reports/ai-summary.ts — reuse existing generatePostSessionSummary() from lib/ai/coach.ts
+[2026-02-27] DECISION: DB schema already has all columns needed (athletes.gender, session_athletes.{reportToken,whatsappSentAt,whatsappStatus}) — no migration
+[2026-02-27] DECISION: Report token uses Node.js native crypto.createHmac('sha256') — no external JWT lib needed. timingSafeEqual for validation.
+[2026-02-27] GOTCHA: IEEE 754 floating point — (140/100)*45*4.5 = 283.49999... not 283.5, so Math.round gives 283 not 284. Test expectations must match actual float arithmetic.
+[2026-02-27] DECISION: calculateZoneTimes() ignores zone 0 (rest) — only accumulates time for zones 1-5, caps gaps at 30s
+[2026-02-27] DECISION: Middleware PUBLIC_PATTERNS updated with /reports and /api/v1/reports — report pages use token auth, not Clerk
+[2026-02-27] NOTE: Starting Spec 12 Part B — WhatsApp client, templates, report generation pipeline
+[2026-02-27] DECISION: WhatsApp client uses singleton Twilio pattern with 1 retry after 30s — matches spec retry policy
+[2026-02-27] DECISION: Template params joined with " | " as body (ContentSid used in Twilio production, body is fallback)
+[2026-02-27] DECISION: Report pipeline uses setTimeout(120_000) for WhatsApp scheduling — 2-minute delay per spec
+[2026-02-27] DECISION: Phone validation: starts with "+" and 10-15 digits — skips invalid phones silently
+[2026-02-27] DECISION: WhatsApp eligibility triple-check: whatsappOptIn=true + valid phone + whatsappSentAt IS NULL
+[2026-02-27] DECISION: formatDuration exported from generate.ts — utility for mm:ss formatting
+[2026-02-27] DECISION: Reuses generatePostSessionSummary from lib/ai/coach.ts — no separate ai-summary module needed
+[2026-02-27] COMPLETED: Spec 12 Part B — WhatsApp client + templates + report pipeline (19 new tests, 880 total excluding worktree). Files created: lib/whatsapp/client.ts, lib/whatsapp/templates.ts, lib/reports/generate.ts + 3 test files. 0 lint errors.
+[2026-02-27] COMPLETED: Spec 12 Part C — Report web page with charts (8 new tests). Files: page.tsx, ReportView.tsx, ZoneDistributionChart.tsx, HrTimelineChart.tsx + 3 test files. Mobile-first, gym-branded, token-only auth.
+[2026-02-27] COMPLETED: Spec 12 Part D — API Routes 03H (12 new tests). Files: GET /api/v1/reports/session/[id], POST /api/v1/reports/session/[id]/send-whatsapp + 2 test files. Dual auth (Clerk OR token) on GET.
+[2026-02-27] DECISION: Part D GET route uses isAuthError() check — tries Clerk first, falls back to token on any auth error
+[2026-02-27] DECISION: Part D POST send-whatsapp validates session status === "completed" not "ended" — session_status schema uses "completed"
+[2026-02-27] COMPLETED: Spec 12 — Reports & WhatsApp — ALL 4 PARTS DONE. 66 new tests (900 total passing), 0 lint errors. New files: lib/hr/calories.ts, lib/reports/{token,stats,generate}.ts, lib/whatsapp/{client,templates}.ts, app/reports/session/[sessionId]/[athleteId]/{page,ReportView}.tsx, components/reports/{ZoneDistributionChart,HrTimelineChart}.tsx, app/api/v1/reports/session/[id]/{route.ts,send-whatsapp/route.ts} + 10 test files. Modified: lib/hr/zones.ts (calculateZoneTimes), middleware.ts (PUBLIC_PATTERNS). Dependencies added: recharts@3.7.0, twilio@5.12.2. Spec moved to specs/done/
+[2026-02-27] NOTE: Starting Spec 12 Part C — Report Web Page with charts (page.tsx, ReportView.tsx, ZoneDistributionChart, HrTimelineChart)
+[2026-02-27] DECISION: Report page uses token-only auth (no Clerk) — validateReportToken from lib/reports/token.ts, params/searchParams are Promises (Next.js 16)
+[2026-02-27] GOTCHA: Write tool writes literal \u00f3 (6 chars) not actual Unicode char — use ASCII-only text in JSX strings to avoid mismatches in tests
+[2026-02-27] DECISION: Error messages use ASCII-only Spanish (no accents) to avoid Unicode encoding issues between Write tool and test assertions
+[2026-02-27] DECISION: Chart tests mock recharts entirely (ResponsiveContainer, BarChart, LineChart as simple divs) — jsdom can't render SVG properly
+[2026-02-27] DECISION: Page server component test renders by calling as function (async) then render(result) — standard Next.js 16 RSC test pattern
+[2026-02-27] COMPLETED: Spec 12 Part C — Report Web Page with charts (8 new tests, 888 total passing excluding worktrees, 0 lint errors). Files created: app/reports/session/[sessionId]/[athleteId]/page.tsx, app/reports/session/[sessionId]/[athleteId]/ReportView.tsx, components/reports/ZoneDistributionChart.tsx, components/reports/HrTimelineChart.tsx + 3 test files. Server component with token auth, client components with Recharts charts, error states for missing/invalid/mismatched tokens.
+[2026-02-27] NOTE: Starting Spec 12 Part D — API Routes for report endpoints (03H): GET /api/v1/reports/session/[id] + POST /api/v1/reports/session/[id]/send-whatsapp
+[2026-02-27] DECISION: GET reports/session/[id] uses dual auth — try Clerk (requireGymAccessApi) first, fallback to token query param (validateReportToken). Token auth restricts to single athlete.
+[2026-02-27] DECISION: POST send-whatsapp is Clerk-only (owner/trainer) — no token auth. Uses validateBody for optional athleteIds filter.
+[2026-02-27] DECISION: Dual auth pattern: try requireGymAccessApi() first (returns AuthError on failure, not throws), then validate token. isAuthError() type guard for branching.
+[2026-02-27] DECISION: Token auth restricts to single athlete (tokenAthleteId filter applied to sessionAthletes query). Clerk auth allows athleteId query param filter.
+[2026-02-27] GOTCHA: Worktree missing lib/reports/, lib/whatsapp/, lib/logger.ts stubs — created stubs so vi.mock() can intercept imports (module resolution fails before mock intercept without files).
+[2026-02-27] COMPLETED: Spec 12 Part D — Report API Routes (2 endpoints: GET /api/v1/reports/session/[id] with dual auth, POST /api/v1/reports/session/[id]/send-whatsapp with Clerk-only auth — 12 new tests, 562 in worktree, 0 lint errors). Files created: app/api/v1/reports/session/[id]/route.ts, app/api/v1/reports/session/[id]/send-whatsapp/route.ts + 2 test files.

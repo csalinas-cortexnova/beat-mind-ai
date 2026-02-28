@@ -1,4 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import {
+  checkRateLimit,
+  rateLimitResponse,
+  RATE_LIMITS,
+} from "@/lib/api/rate-limit";
 
 // --- Public route patterns ---
 const PUBLIC_PATTERNS = [
@@ -9,6 +14,8 @@ const PUBLIC_PATTERNS = [
   "/api/tv",
   "/api/agent",
   "/tv",
+  "/reports",
+  "/api/v1/reports",
 ];
 
 function isPublicPath(pathname: string): boolean {
@@ -83,6 +90,19 @@ export function getRouteDecision(
   return { action: "allow" };
 }
 
+// --- IP extraction ---
+export function getClientIp(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) {
+    return realIp.trim();
+  }
+  return "unknown";
+}
+
 // --- Clerk middleware integration ---
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -92,10 +112,24 @@ const isPublicRoute = createRouteMatcher([
   "/api/tv(.*)",
   "/api/agent(.*)",
   "/tv(.*)",
+  "/reports(.*)",
+  "/api/v1/reports(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
   const { pathname } = request.nextUrl;
+
+  // Rate limit: IP-based for all API routes (before auth)
+  if (pathname.startsWith("/api/")) {
+    const ip = getClientIp(request);
+    const ipResult = checkRateLimit(
+      `ip:${ip}`,
+      RATE_LIMITS.UNAUTHENTICATED_API
+    );
+    if (!ipResult.allowed) {
+      return rateLimitResponse(ipResult.retryAfterS);
+    }
+  }
 
   // Allow public routes without auth
   if (isPublicRoute(request)) {
@@ -104,6 +138,17 @@ export default clerkMiddleware(async (auth, request) => {
 
   // All other routes require auth
   const { userId, orgId, orgRole, sessionClaims } = await auth.protect();
+
+  // Rate limit: user-based for authenticated V1 API routes
+  if (pathname.startsWith("/api/v1/") && userId) {
+    const userResult = checkRateLimit(
+      `user:${userId}`,
+      RATE_LIMITS.AUTHENTICATED_API
+    );
+    if (!userResult.allowed) {
+      return rateLimitResponse(userResult.retryAfterS);
+    }
+  }
 
   const decision = getRouteDecision(pathname, {
     userId,

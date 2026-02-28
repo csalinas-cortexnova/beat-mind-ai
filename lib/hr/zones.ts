@@ -99,6 +99,48 @@ export function getAllZones(): ZoneDefinition[] {
   return [REST_ZONE, ...ZONES];
 }
 
+/**
+ * Calculate time spent in each zone from ordered HR readings.
+ * For consecutive readings, the time delta is attributed to the zone of the first reading.
+ * Gaps > 30 seconds are capped to prevent sensor dropout inflation.
+ */
+export function calculateZoneTimes(
+  readings: { heartRateBpm: number; recordedAt: Date }[],
+  maxHr: number
+): {
+  zone1Seconds: number;
+  zone2Seconds: number;
+  zone3Seconds: number;
+  zone4Seconds: number;
+  zone5Seconds: number;
+} {
+  const zoneTimes = {
+    zone1Seconds: 0,
+    zone2Seconds: 0,
+    zone3Seconds: 0,
+    zone4Seconds: 0,
+    zone5Seconds: 0,
+  };
+
+  for (let i = 0; i < readings.length - 1; i++) {
+    const current = readings[i];
+    const next = readings[i + 1];
+    const deltaSeconds =
+      (next.recordedAt.getTime() - current.recordedAt.getTime()) / 1000;
+
+    // Cap delta at 30 seconds to handle sensor dropouts
+    const cappedDelta = Math.min(Math.max(deltaSeconds, 0), 30);
+
+    const zone = getZone(current.heartRateBpm, maxHr);
+    if (zone.zone >= 1 && zone.zone <= 5) {
+      const key = `zone${zone.zone}Seconds` as keyof typeof zoneTimes;
+      zoneTimes[key] += cappedDelta;
+    }
+  }
+
+  return zoneTimes;
+}
+
 function getName(zone: ZoneDefinition, lang: string): string {
   if (lang === "pt") return zone.names.pt;
   return zone.names.es; // default to Spanish

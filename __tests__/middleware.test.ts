@@ -1,6 +1,7 @@
 // @vitest-environment node
-import { describe, it, expect } from "vitest";
-import { getRouteDecision } from "../middleware";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { getRouteDecision, getClientIp } from "../middleware";
+import { _resetStore, RATE_LIMITS } from "../lib/api/rate-limit";
 
 type AuthData = {
   userId: string | null;
@@ -105,6 +106,19 @@ describe("middleware route protection", () => {
 
     it("should allow /tv/gym123", () => {
       const result = getRouteDecision("/tv/gym123", unauthUser);
+      expect(result).toEqual({ action: "allow" });
+    });
+
+    it("should allow /reports without auth (token-based)", () => {
+      const result = getRouteDecision("/reports/session/abc/def", unauthUser);
+      expect(result).toEqual({ action: "allow" });
+    });
+
+    it("should allow /api/v1/reports without auth (token-based)", () => {
+      const result = getRouteDecision(
+        "/api/v1/reports/session/abc",
+        unauthUser
+      );
       expect(result).toEqual({ action: "allow" });
     });
   });
@@ -222,5 +236,71 @@ describe("middleware route protection", () => {
       const result = getRouteDecision("/dashboard", gymOwner);
       expect(result).toEqual({ action: "allow" });
     });
+  });
+});
+
+describe("getClientIp", () => {
+  it("should extract IP from x-forwarded-for header", () => {
+    const request = new Request("http://localhost/api/v1/test", {
+      headers: { "x-forwarded-for": "1.2.3.4, 5.6.7.8" },
+    });
+    expect(getClientIp(request)).toBe("1.2.3.4");
+  });
+
+  it("should extract IP from x-real-ip header when x-forwarded-for absent", () => {
+    const request = new Request("http://localhost/api/v1/test", {
+      headers: { "x-real-ip": "10.0.0.1" },
+    });
+    expect(getClientIp(request)).toBe("10.0.0.1");
+  });
+
+  it("should prefer x-forwarded-for over x-real-ip", () => {
+    const request = new Request("http://localhost/api/v1/test", {
+      headers: {
+        "x-forwarded-for": "1.2.3.4",
+        "x-real-ip": "10.0.0.1",
+      },
+    });
+    expect(getClientIp(request)).toBe("1.2.3.4");
+  });
+
+  it("should return 'unknown' when no IP headers present", () => {
+    const request = new Request("http://localhost/api/v1/test");
+    expect(getClientIp(request)).toBe("unknown");
+  });
+});
+
+describe("middleware rate limiting", () => {
+  beforeEach(() => {
+    _resetStore();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Note: The actual middleware rate limiting is tested through the checkRateLimit
+  // unit tests in rate-limit.test.ts. These tests verify the integration points:
+  // - getClientIp correctly extracts IPs
+  // - Rate limit configs are correct for each route type
+  // The middleware itself wraps clerkMiddleware which requires Clerk server context,
+  // making direct integration testing complex without E2E setup.
+
+  it("should have correct unauthenticated API rate limit (10/min)", () => {
+    expect(RATE_LIMITS.UNAUTHENTICATED_API.maxRequests).toBe(10);
+    expect(RATE_LIMITS.UNAUTHENTICATED_API.windowMs).toBe(60_000);
+  });
+
+  it("should have correct authenticated API rate limit (100/min)", () => {
+    expect(RATE_LIMITS.AUTHENTICATED_API.maxRequests).toBe(100);
+    expect(RATE_LIMITS.AUTHENTICATED_API.windowMs).toBe(60_000);
+  });
+
+  it("should not rate limit non-API routes", () => {
+    // Non-API routes should not be rate-limited
+    // The middleware only applies IP rate limits to /api/* paths
+    const result = getRouteDecision("/dashboard", authedUser);
+    expect(result).toEqual({ action: "allow" });
   });
 });

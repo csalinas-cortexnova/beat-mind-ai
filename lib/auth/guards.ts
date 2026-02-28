@@ -213,6 +213,41 @@ export async function requireGymAccessApi(
  * API version of requireGymOwner.
  * Returns AuthError instead of redirecting. Trainers get 403.
  */
+/**
+ * API version of requireAthlete.
+ * Returns AuthError instead of redirecting.
+ */
+export async function requireAthleteApi(): Promise<AthleteContext | AuthError> {
+  const { userId, orgId, orgRole } = await auth();
+  if (!userId) return { error: "Unauthorized", status: 401 };
+  if (!orgId || orgRole !== "org:athlete")
+    return { error: "Forbidden", status: 403 };
+
+  const gym = await findGymByOrg(orgId);
+  if (!gym) return { error: "Forbidden", status: 403 };
+
+  const dbUser = await findDbUser(userId);
+  if (!dbUser) return { error: "Forbidden", status: 403 };
+
+  const athleteRows = await db
+    .select({ id: athletes.id })
+    .from(athletes)
+    .where(eq(athletes.userId, dbUser.id));
+
+  if (athleteRows.length === 0) return { error: "Forbidden", status: 403 };
+
+  return {
+    user: toAuthUser(userId, dbUser),
+    gymId: gym.id,
+    orgId,
+    athleteId: athleteRows[0].id,
+  };
+}
+
+/**
+ * API version of requireGymOwner.
+ * Returns AuthError instead of redirecting. Trainers get 403.
+ */
 export async function requireGymOwnerApi(): Promise<GymContext | AuthError> {
   const { userId, orgId, orgRole } = await auth();
   if (!userId) return { error: "Unauthorized", status: 401 };

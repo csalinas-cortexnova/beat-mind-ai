@@ -39,6 +39,29 @@ const nextConfig: NextConfig = {
         source: "/tv/:path*",
         headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
       },
+      {
+        // CORS for API routes
+        source: "/api/:path*",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value:
+              process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization, X-Agent-Id, X-Agent-Secret",
+          },
+          {
+            key: "Access-Control-Max-Age",
+            value: "86400",
+          },
+        ],
+      },
     ];
   },
 };

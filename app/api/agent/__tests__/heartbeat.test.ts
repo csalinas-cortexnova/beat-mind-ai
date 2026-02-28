@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { _resetStore } from "@/lib/api/rate-limit";
 
 // --- Mocks ---
 
@@ -144,6 +145,7 @@ function setupHappyPath() {
 describe("POST /api/agent/heartbeat", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    _resetStore();
   });
 
   // --- Auth ---
@@ -375,5 +377,53 @@ describe("POST /api/agent/heartbeat", () => {
     });
     const res = await POST(req);
     expect(res.status).toBe(422);
+  });
+
+  // --- Rate limiting ---
+  describe("rate limiting", () => {
+    it("should allow 20 requests per second", async () => {
+      // Heartbeat rate limit: 20/sec
+      for (let i = 0; i < 20; i++) {
+        setupHappyPath();
+        const res = await POST(createRequest(validBody()));
+        expect(res.status).toBe(200);
+      }
+    });
+
+    it("should return 429 on 21st request within 1 second", async () => {
+      for (let i = 0; i < 20; i++) {
+        setupHappyPath();
+        await POST(createRequest(validBody()));
+      }
+
+      setupHappyPath();
+      const res = await POST(createRequest(validBody()));
+      expect(res.status).toBe(429);
+      expect(res.headers.get("Retry-After")).toBeTruthy();
+      const data = await res.json();
+      expect(data.code).toBe("RATE_LIMITED");
+    });
+
+    it("should rate limit per agent independently", async () => {
+      const AGENT_2 = "660e8400-e29b-41d4-a716-446655440099";
+
+      // Exhaust Agent 1 limit (20 req/sec)
+      for (let i = 0; i < 20; i++) {
+        setupHappyPath();
+        await POST(createRequest(validBody()));
+      }
+      setupHappyPath();
+      const blocked = await POST(createRequest(validBody()));
+      expect(blocked.status).toBe(429);
+
+      // Agent 2 should still be allowed
+      mockVerifyAgentAuth.mockResolvedValue({ agentId: AGENT_2, gymId: GYM_ID });
+      const mockBandsWhere = vi.fn().mockResolvedValue([]);
+      const mockBandsFrom = vi.fn(() => ({ where: mockBandsWhere }));
+      mockDbSelect.mockReturnValue({ from: mockBandsFrom });
+
+      const res = await POST(createRequest(validBody({ agentId: AGENT_2 })));
+      expect(res.status).toBe(200);
+    });
   });
 });

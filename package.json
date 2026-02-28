@@ -9,17 +9,22 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "ws:dev": "bun run ws-server.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.38.3",
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^0.45.1",
     "next": "16.1.6",
+    "openai": "^6.25.0",
     "pg": "^8.19.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "recharts": "^3.7.0",
     "svix": "^1.86.0",
+    "twilio": "^5.12.2",
+    "ws": "^8.19.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -32,6 +37,7 @@
     "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.1.4",
     "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.9",

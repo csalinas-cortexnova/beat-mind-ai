@@ -7,12 +7,22 @@ import { db } from "@/lib/db";
 import { athleteBands, athletes, sessions, hrReadings } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getZone } from "@/lib/hr/zones";
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/api/rate-limit";
 
 export async function POST(request: Request) {
   // 1. Auth
   const authResult = await verifyAgentAuth(request);
   if (isAuthError(authResult)) {
     return error(authResult.error, ApiErrorCode.UNAUTHORIZED, authResult.status);
+  }
+
+  // 1b. Rate limit per agent
+  const rlResult = checkRateLimit(
+    `agent-hb:${authResult.agentId}`,
+    RATE_LIMITS.AGENT_HEARTBEAT
+  );
+  if (!rlResult.allowed) {
+    return rateLimitResponse(rlResult.retryAfterS);
   }
 
   // 2. Parse JSON body

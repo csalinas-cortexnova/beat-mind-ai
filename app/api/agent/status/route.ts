@@ -6,12 +6,22 @@ import { AgentStatusSchema } from "@/lib/validations/agent";
 import { db } from "@/lib/db";
 import { agents } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/api/rate-limit";
 
 export async function POST(request: Request) {
   // 1. Auth
   const authResult = await verifyAgentAuth(request);
   if (isAuthError(authResult)) {
     return error(authResult.error, ApiErrorCode.UNAUTHORIZED, authResult.status);
+  }
+
+  // 1b. Rate limit per agent
+  const rlResult = checkRateLimit(
+    `agent-st:${authResult.agentId}`,
+    RATE_LIMITS.AGENT_STATUS
+  );
+  if (!rlResult.allowed) {
+    return rateLimitResponse(rlResult.retryAfterS);
   }
 
   // 2. Parse JSON body

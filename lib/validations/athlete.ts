@@ -41,6 +41,11 @@ export const UpdateAthleteProfileSchema = z
     message: "At least one field must be provided",
   });
 
+export const AthleteProgressQuerySchema = z.object({
+  period: z.enum(["weekly", "monthly"]).default("weekly"),
+});
+
 export type CreateAthlete = z.infer<typeof CreateAthleteSchema>;
 export type UpdateAthlete = z.infer<typeof UpdateAthleteSchema>;
 export type UpdateAthleteProfile = z.infer<typeof UpdateAthleteProfileSchema>;
+export type AthleteProgressQuery = z.infer<typeof AthleteProgressQuerySchema>;
