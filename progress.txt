@@ -165,3 +165,24 @@ Categories: COMPLETED | GOTCHA | DECISION | BLOCKER | NOTE
 [2026-02-27] DECISION: Token auth restricts to single athlete (tokenAthleteId filter applied to sessionAthletes query). Clerk auth allows athleteId query param filter.
 [2026-02-27] GOTCHA: Worktree missing lib/reports/, lib/whatsapp/, lib/logger.ts stubs — created stubs so vi.mock() can intercept imports (module resolution fails before mock intercept without files).
 [2026-02-27] COMPLETED: Spec 12 Part D — Report API Routes (2 endpoints: GET /api/v1/reports/session/[id] with dual auth, POST /api/v1/reports/session/[id]/send-whatsapp with Clerk-only auth — 12 new tests, 562 in worktree, 0 lint errors). Files created: app/api/v1/reports/session/[id]/route.ts, app/api/v1/reports/session/[id]/send-whatsapp/route.ts + 2 test files.
+[2026-02-27] NOTE: Starting Spec 05 Part A — Foundation (Layout + Types + Shared Components). 3 parallel agents: types+validation, UI components (StatusBadge+DataTable), sidebar+layout.
+[2026-02-27] DECISION: lucide-react@0.575.0 installed for sidebar nav icons (LayoutDashboard, Building2, Cpu). Tree-shakable ~3KB per icon.
+[2026-02-27] DECISION: No shadcn/ui — raw Tailwind CSS for all Spec 05 UI components. Keep it simple, no component library.
+[2026-02-27] DECISION: (platform) route group for superadmin layout — no URL impact, middleware still protects /superadmin paths.
+[2026-02-27] DECISION: DataTable uses URL search params pattern — component is presentational, parent controls pagination/sorting via props + callbacks.
+[2026-02-27] DECISION: StatusBadge is server component (no "use client") — pure presentational with 5 variants (success, warning, danger, neutral, info).
+[2026-02-27] DECISION: Sidebar has both mobile (slide-in + backdrop) and desktop (fixed w-64) variants — uses lg: breakpoint for responsive.
+[2026-02-27] DECISION: Sidebar active state uses exact match for Overview (/superadmin), prefix match for Gyms/Agents sub-routes.
+[2026-02-27] DECISION: Form schemas (CreateGymFormSchema, UpdateGymFormSchema) separate from API schemas — UI forms have different fields (e.g., ownerEmail in form, not in API body).
+[2026-02-27] DECISION: Types in types/superadmin.ts use string for dates (JSON serialized) — matches API response format.
+[2026-02-27] COMPLETED: Spec 05 Part A — Foundation (Layout + Types + Shared Components). 72 new tests (958 total passing), 0 lint errors. Files created: types/superadmin.ts, components/ui/status-badge.tsx, components/ui/data-table.tsx, components/ui/__tests__/status-badge.test.tsx, components/ui/__tests__/data-table.test.tsx, components/superadmin/sidebar.tsx, components/superadmin/__tests__/sidebar.test.tsx, app/(platform)/superadmin/layout.tsx. Files modified: lib/validations/superadmin.ts (+3 schemas), lib/validations/__tests__/superadmin.test.ts (+32 tests). Dependency added: lucide-react@0.575.0.
+[2026-02-27] NOTE: Starting Spec 04 Infrastructure — 4 parts: A=Scripts+Config, B=Runbooks, C=PM2+Deploy, D=Verification
+[2026-02-27] DECISION: Production WS port = 8080 (not 3001) — Nginx proxies /ws/ to 8080, direct access blocked by UFW
+[2026-02-27] DECISION: MIGRATION_DATABASE_URL env var for Drizzle migrations — app uses beatmind_app (CRUD), migrations use beatmind_migrations (ALL)
+[2026-02-27] DECISION: Archive tables (hr_readings_archive, ai_coaching_messages_archive) have no FK constraints — archived data is self-contained
+[2026-02-27] DECISION: Data retention uses INSERT...ON CONFLICT DO NOTHING for idempotent re-runs
+[2026-02-27] DECISION: ecosystem.config.js uses env (dev defaults) + env_production (prod overrides) — WS port 3001 dev, 8080 prod
+[2026-02-27] DECISION: drizzle.config.ts prefers MIGRATION_DATABASE_URL over DATABASE_URL — one-line change for least-privilege DB access during migrations
+[2026-02-27] DECISION: verify-security.sh uses portable stat flags (GNU -c vs BSD -f) for cross-platform compat
+[2026-02-27] DECISION: Backup script uses -Z 6 compression in pg_dump custom format — good balance of speed vs size
+[2026-02-27] COMPLETED: Spec 04 Infrastructure — ALL 4 PARTS DONE. 14 new files + 2 modified (ecosystem.config.js, drizzle.config.ts). 0 vitest tests (infrastructure spec). Validated: shellcheck 0 warnings on all 4 shell scripts, 900 tests passing, 0 lint errors. Files: infra/nginx/beatmind.conf, infra/scripts/{vps-setup,db-roles,backup,data-retention,deploy,verify-security}.{sh,sql}, infra/systemd/beatmind-pm2.service, infra/cron/beatmind-cron, infra/runbooks/{credential-rotation,git-history-cleanup}.md, infra/checklists/pre-launch-security.md, infra/README.md, .github/dependabot.yml

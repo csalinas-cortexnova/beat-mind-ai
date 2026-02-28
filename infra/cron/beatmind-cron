@@ -1,0 +1,9 @@
+# BeatMind AI — Cron Entries
+# Install: crontab -u beatmind /opt/beatmind/beat-mind-ai/infra/cron/beatmind-cron
+# Verify: crontab -u beatmind -l
+
+# Daily database backup at 03:00 UTC
+0 3 * * * /opt/beatmind/beat-mind-ai/infra/scripts/backup.sh >> /opt/beatmind/logs/backup.log 2>&1
+
+# Monthly data retention (archive + purge) at 04:00 UTC on the 1st
+0 4 1 * * PGPASSWORD="$(grep '^MIGRATION_DATABASE_URL=' /opt/beatmind/beat-mind-ai/.env.local | sed 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/')" psql -h localhost -U beatmind_migrations -d beatmind -f /opt/beatmind/beat-mind-ai/infra/scripts/data-retention.sql >> /opt/beatmind/logs/retention.log 2>&1

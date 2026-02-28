@@ -184,10 +184,10 @@
 ## 4. Security [`specs/security_spec.md`](specs/security_spec.md)
 
 ### Credential Management
-- [ ] Rotate all exposed credentials (Clerk keys, DATABASE_URL, OPENAI_API_KEY)
-- [ ] Use BFG Repo-Cleaner to remove `.env.local` from git history
+- [x] Rotate all exposed credentials (Clerk keys, DATABASE_URL, OPENAI_API_KEY)
+- [x] Use BFG Repo-Cleaner to remove `.env.local` from git history
 - [x] Verify `.gitignore` contains `.env*`, `*.pem`, `*.key` entries
-- [ ] Set `.env.local` file permissions to 600
+- [x] Set `.env.local` file permissions to 600
 
 ### Tenant Isolation
 - [x] Create `withGymScope()` and `withGymScopeAnd()` utility functions
@@ -210,20 +210,20 @@
 - [ ] Implement per-connection rate limiting
 
 ### Database Security
-- [ ] Create `beatmind_app` database role with limited privileges
-- [ ] Create `beatmind_migrations` role for deployments
-- [ ] Configure `DATABASE_URL` with `sslmode=require` for production
+- [x] Create `beatmind_app` database role with limited privileges
+- [x] Create `beatmind_migrations` role for deployments
+- [x] Configure `DATABASE_URL` with `sslmode=require` for production
 
 ### Data Privacy
 - [x] Implement `deleteAthleteData()` function with atomic transaction
-- [ ] Implement data retention policies (hr_readings 24 months, ai_coaching_messages 12 months)
+- [x] Implement data retention policies (hr_readings 24 months, ai_coaching_messages 12 months)
 - [ ] Add WhatsApp opt-in fields to athletes table
 
 ### Server Hardening
-- [ ] Configure TLS (v1.2+) in reverse proxy
-- [ ] Configure UFW firewall rules
-- [ ] Create non-root `beatmind` user on VPS
-- [ ] Configure PM2 processes as non-root user
+- [x] Configure TLS (v1.2+) in reverse proxy
+- [x] Configure UFW firewall rules
+- [x] Create non-root `beatmind` user on VPS
+- [x] Configure PM2 processes as non-root user
 
 ### Logging
 - [x] Create structured logging utility in `lib/logger.ts`
@@ -244,8 +244,8 @@
 ## 5. SuperAdmin Dashboard [`specs/superadmin_dashboard_spec.md`](specs/superadmin_dashboard_spec.md)
 
 ### Layout & Navigation
-- [ ] Create SuperAdmin layout with sidebar navigation (Overview, Gyms, Agents)
-- [ ] Create SuperAdmin sidebar component with icons and active state
+- [x] Create SuperAdmin layout with sidebar navigation (Overview, Gyms, Agents)
+- [x] Create SuperAdmin sidebar component with icons and active state
 
 ### Overview Page
 - [ ] Create overview page (`/superadmin`) with stats cards (total gyms, active gyms, athletes, sessions, agents)
@@ -255,8 +255,8 @@
 ### Gym Management
 - [ ] Create gym list page (`/superadmin/gyms`) with server-side paginated DataTable
 - [ ] Implement gym list filtering by subscription status and search
-- [ ] Create `DataTable` component with sorting, filtering, pagination
-- [ ] Create `StatusBadge` component
+- [x] Create `DataTable` component with sorting, filtering, pagination
+- [x] Create `StatusBadge` component
 - [ ] Build create gym page (`/superadmin/gyms/new`) with `GymForm` component
 - [ ] Implement slug auto-generation from gym name
 - [ ] Implement color picker for primary/secondary colors

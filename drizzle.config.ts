@@ -4,8 +4,13 @@ import { defineConfig } from "drizzle-kit";
 // drizzle-kit CLI runs outside Next.js, so .env.local isn't auto-loaded
 dotenv.config({ path: ".env.local" });
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set in environment variables");
+// Prefer MIGRATION_DATABASE_URL (full privileges) over DATABASE_URL (app-level)
+const databaseUrl = process.env.MIGRATION_DATABASE_URL || process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error(
+    "Neither MIGRATION_DATABASE_URL nor DATABASE_URL is set in environment variables"
+  );
 }
 
 export default defineConfig({
@@ -13,6 +18,6 @@ export default defineConfig({
   out: "./lib/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    url: databaseUrl,
   },
 });

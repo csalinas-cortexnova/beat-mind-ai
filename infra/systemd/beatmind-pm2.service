@@ -1,0 +1,34 @@
+# BeatMind AI — PM2 systemd Service
+# Ensures PM2 starts on boot as the 'beatmind' user
+#
+# Installation:
+#   sudo cp infra/systemd/beatmind-pm2.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable beatmind-pm2
+#   sudo systemctl start beatmind-pm2
+#
+# Alternative (PM2 built-in):
+#   pm2 startup systemd -u beatmind --hp /home/beatmind
+
+[Unit]
+Description=BeatMind AI PM2 Process Manager
+Documentation=https://pm2.keymetrics.io/docs/usage/startup/
+After=network.target postgresql.service
+
+[Service]
+Type=forking
+User=beatmind
+Group=beatmind
+Environment=HOME=/home/beatmind
+Environment=PATH=/home/beatmind/.bun/bin:/usr/local/bin:/usr/bin:/bin
+WorkingDirectory=/opt/beatmind/beat-mind-ai
+ExecStart=/usr/local/bin/pm2 start ecosystem.config.js --env production
+ExecReload=/usr/local/bin/pm2 reload all
+ExecStop=/usr/local/bin/pm2 kill
+PIDFile=/home/beatmind/.pm2/pm2.pid
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
